@@ -75,7 +75,7 @@ const customers = sequelize.define('Customers', {
     allowNull: true,
   },
   address: {
-    type: DataTypes.JSON,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   shop_id: {
@@ -86,9 +86,87 @@ const customers = sequelize.define('Customers', {
   tableName: 'customers'
 });
 
+const inventory = sequelize.define('Inventory', {
+  // Model attributes are defined here
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    unique: true,
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  price: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
+  quantity: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  category_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  shop_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+
+
+}, {
+  tableName: 'inventory'
+});
+
+const orders = sequelize.define('Orders', {
+  // Model attributes are defined here
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    unique: true,
+  },
+  customer_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  item_list: {
+    type: DataTypes.JSON,
+    allowNull: false,
+  },
+  shop_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  address: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  order_date: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  total: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
+}, {
+  tableName: 'orders'
+});
+
 
 
 
 testConnection();
 
-module.exports = { shops, customers };
+module.exports = { shops, customers, inventory };
