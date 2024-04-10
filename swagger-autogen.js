@@ -9,7 +9,7 @@ const config = {
         description: '',
     },
     tags: ['Users'],
-    host: 'localhost:3000/',
+    host: 'localhost:3000',
     schemes: ['http', 'https'],
 };
 

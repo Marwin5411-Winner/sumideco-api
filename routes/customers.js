@@ -128,6 +128,40 @@ router.put('/customers/:shopid/:id', verifyShop,(req, res) => {
     customers.updateCustomer(req, res);
 });
 
+/**
+ * @swagger
+ * /customers/{shopid}:
+ * post:
+ * summary: Login customer
+ * tags: [customers]
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * email:
+ * type: string
+ * password:
+ * type: string
+ * required:
+ * - email
+ * - password
+ * responses:
+ * 200:
+ * description: Success
+ * 400:
+ * description: Bad Request
+ * 500:
+ * description: Internal Server Error
+ */
+router.post('/customers/login/:shopid', verifyShop, (req, res) => {
+    // #swagger.tags = ['Customers']
+    // #swagger.description = 'Login customer'
+    customers.loginCustomer(req, res);
+});
+
 
 
 

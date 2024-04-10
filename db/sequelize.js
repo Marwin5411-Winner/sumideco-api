@@ -86,7 +86,7 @@ const customers = sequelize.define('Customers', {
   tableName: 'customers'
 });
 
-const inventory = sequelize.define('Inventory', {
+const products = sequelize.define('Products', {
   // Model attributes are defined here
   id: {
     type: DataTypes.INTEGER,
@@ -94,7 +94,7 @@ const inventory = sequelize.define('Inventory', {
     autoIncrement: true,
     unique: true,
   },
-  title: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -108,11 +108,12 @@ const inventory = sequelize.define('Inventory', {
   },
   quantity: {
     type: DataTypes.INTEGER,
+    defaultValue: 0,
     allowNull: false,
   },
   category_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   shop_id: {
     type: DataTypes.INTEGER,
@@ -121,7 +122,7 @@ const inventory = sequelize.define('Inventory', {
 
 
 }, {
-  tableName: 'inventory'
+  tableName: 'products'
 });
 
 const orders = sequelize.define('Orders', {
@@ -169,4 +170,4 @@ const orders = sequelize.define('Orders', {
 
 testConnection();
 
-module.exports = { shops, customers, inventory };
+module.exports = { shops, customers, products, orders };
