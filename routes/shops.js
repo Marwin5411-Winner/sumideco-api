@@ -12,37 +12,37 @@ const { createShop, getShops, getShopById, loginShop } = require('../modules/sho
 
 /* GET shops listing. */
 router.get('/shops', function(req, res, next) {
-  // #swagger.tags = ['Users']
+  // #swagger.tags = ['Shops']
   getShops(req, res);
 });
 
 /* GET user */
 router.get('/shops/:id', function(req, res, next) {
-  // #swagger.tags = ['Users']
+  // #swagger.tags = ['Shops']
   getShopById(req, res);
 });
 
 /* POST create user. */
 router.post('/shops/create', (req, res, next) => {
-  // #swagger.tags = ['Users']
+  // #swagger.tags = ['Shops']
   createShop(req, res);
 });
 
 /* PUT update user. */
 router.put('/shops/update/:id', (req, res, next) => {
-  // #swagger.tags = ['Users']
+  // #swagger.tags = ['Shops']
   res.send('respond with a resource');
 });
 
 /* DELETE delete user. */
 router.delete('/shops/delete/:id', (req, res, next) => {
-  // #swagger.tags = ['Users']
+  // #swagger.tags = ['Shops']
   res.send('respond with a resource');
 });
 
 /* POST Login user */
 router.post('/shops/login', (req, res, next) => {
-  // #swagger.tags = ['Users']
+  // #swagger.tags = ['Shops']
   loginShop(req, res);
 });
 

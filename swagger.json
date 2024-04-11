@@ -407,10 +407,37 @@
         }
       }
     },
+    "/products/{shopid}/{category}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "shopid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "category",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/shops": {
       "get": {
         "tags": [
-          "Users"
+          "Shops"
         ],
         "description": "",
         "responses": {
@@ -426,7 +453,7 @@
     "/shops/{id}": {
       "get": {
         "tags": [
-          "Users"
+          "Shops"
         ],
         "description": "",
         "parameters": [
@@ -456,7 +483,7 @@
     "/shops/create": {
       "post": {
         "tags": [
-          "Users"
+          "Shops"
         ],
         "description": "",
         "parameters": [
@@ -501,7 +528,7 @@
     "/shops/update/{id}": {
       "put": {
         "tags": [
-          "Users"
+          "Shops"
         ],
         "description": "",
         "parameters": [
@@ -522,7 +549,7 @@
     "/shops/delete/{id}": {
       "delete": {
         "tags": [
-          "Users"
+          "Shops"
         ],
         "description": "",
         "parameters": [
@@ -543,7 +570,7 @@
     "/shops/login": {
       "post": {
         "tags": [
-          "Users"
+          "Shops"
         ],
         "description": "",
         "parameters": [

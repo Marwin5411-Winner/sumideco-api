@@ -33,6 +33,11 @@ router.delete('/products/:shopid/:id', function(req, res, next) {
     products.deleteProduct(req, res);
 });
 
+router.get('/products/:shopid/:category', function(req, res, next) {
+    // #swagger.tags = ['Products']
+    products.getProductsByCategory(req, res);
+});
+
 
 
 

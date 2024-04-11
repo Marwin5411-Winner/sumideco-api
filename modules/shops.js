@@ -70,18 +70,17 @@ exports.createShop = async (req, res) => {
 exports.loginShop = async (req, res) => {
   const { email, password } = req.body;
   try {
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("hashedPassword", hashedPassword);
-    
-
     let shop = await mongoose.ShopCustomers.findOne({
       email: email,
     });
+
     if (!shop) {
       return res.status(404).send("User not found");
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("hashedPassword", hashedPassword);
+    
     const isMatch = await bcrypt.compare(password, shop.password);
     if (!isMatch) {
       return res.status(400).send("Invalid password");
