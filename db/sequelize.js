@@ -23,17 +23,12 @@ const shops = sequelize.define(
       autoIncrement: true,
       unique: true,
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     ssoId: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    role: {
+    status: {
       type: DataTypes.STRING,
-      defaultValue: "user",
       allowNull: false,
     },
     shop_title: {

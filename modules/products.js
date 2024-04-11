@@ -10,7 +10,7 @@ exports.getProducts = async (req, res) => {
         deleted: 0
         },
         offset: req.query.offset ? parseInt(req.query.offset) : 0,
-        limit: req.query.limit ? parseInt(req.query.limit) : config.Query.limit,
+        limit: req.query.limit ? parseInt(req.query.limit) : config.Query.max_limit,
     });
 
     if (!products) {
