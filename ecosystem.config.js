@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "Paxy-API",
-      script: "bin/www",
+      script: "./bin/www",
       instances: 1,
       autorestart: true,
       cwd: "/",
@@ -25,10 +25,6 @@ module.exports = {
         MONGO_DATABASE_URL:
           "mongodb+srv://paxy:!Home4301@ap-se-1.kivqnnv.mongodb.net/tarvation_customers?retryWrites=true&w=majority&appName=ap-se-1",
       },
-    },
-    {
-      script: "./service-worker/",
-      watch: ["./service-worker"],
     },
   ],
 
