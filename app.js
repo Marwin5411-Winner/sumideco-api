@@ -8,6 +8,9 @@ var indexRouter = require('./routes/index');
 var shopsRouter = require('./routes/shops');
 const customersRouter = require('./routes/customers');
 const productsRouter = require('./routes/products');
+const ordersRouter = require('./routes/orders');
+
+
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
@@ -35,6 +38,7 @@ app.use('/', indexRouter);
 app.use('/', shopsRouter);
 app.use('/', customersRouter);
 app.use('/', productsRouter);
+app.use('/', ordersRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 module.exports = app;

@@ -8,7 +8,6 @@ const config = {
         title: 'Paxy API Documentation',
         description: '',
     },
-    tags: ['Users'],
     host: 'localhost:3000',
     schemes: ['http', 'https'],
 };

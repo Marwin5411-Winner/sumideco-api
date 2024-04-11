@@ -159,6 +159,7 @@ const orders = sequelize.define('Orders', {
     allowNull: false,
   },
   item_list: {
+    // [{product_id, quantity}]
     type: DataTypes.JSON,
     allowNull: false,
   },
@@ -168,7 +169,7 @@ const orders = sequelize.define('Orders', {
   },
   discount: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+    allowNull: true,
   },
   coupon_id: {
     type: DataTypes.INTEGER,
@@ -189,6 +190,7 @@ const orders = sequelize.define('Orders', {
   status: {
     type: DataTypes.STRING,
     allowNull: false,
+    defaultValue: 'รอยืนยัน'
   },
   total: {
     type: DataTypes.FLOAT,
