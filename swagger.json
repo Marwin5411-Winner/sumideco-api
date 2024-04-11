@@ -15,6 +15,116 @@
     "https"
   ],
   "paths": {
+    "/carts/{shopid}/{customerid}": {
+      "get": {
+        "tags": [
+          "Carts"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "shopid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "customerid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Carts"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "shopid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "customerid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Carts"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "shopid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "customerid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/carts/{shopid}/{customerid}/{productid}": {
+      "delete": {
+        "tags": [
+          "Carts"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "shopid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "customerid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "productid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/customers/{shopid}": {
       "get": {
         "tags": [
@@ -26,6 +136,16 @@
             "name": "shopid",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "offset",
+            "in": "query",
             "type": "string"
           }
         ],
@@ -245,11 +365,27 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -285,6 +421,18 @@
                 },
                 "quantity": {
                   "example": "any"
+                },
+                "banner": {
+                  "example": "any"
+                },
+                "images": {
+                  "example": "any"
+                },
+                "weight": {
+                  "example": "any"
+                },
+                "size": {
+                  "example": "any"
                 }
               }
             }
@@ -293,6 +441,12 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -323,6 +477,12 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -373,6 +533,12 @@
           "200": {
             "description": "OK"
           },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -398,8 +564,14 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -428,8 +600,14 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }

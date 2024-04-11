@@ -82,6 +82,11 @@ const customers = sequelize.define('Customers', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  deleted: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
 }, {
   tableName: 'customers'
 });
@@ -119,13 +124,29 @@ const products = sequelize.define('Products', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-
+  images: {
+    type: DataTypes.ARRAY(DataTypes.INTEGER),
+    allowNull: true,
+  },
+  weight: {
+    // in grams
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  size: {
+    // width x height x depth in cm
+    type: DataTypes.JSON,
+    allowNull: true,
+  },
   shop_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-
-
+  deleted: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  }
 }, {
   tableName: 'products'
 });
@@ -146,6 +167,18 @@ const orders = sequelize.define('Orders', {
     type: DataTypes.JSON,
     allowNull: false,
   },
+  subtotal: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
+  discount: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
+  coupon_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   shop_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -165,6 +198,11 @@ const orders = sequelize.define('Orders', {
   total: {
     type: DataTypes.FLOAT,
     allowNull: false,
+  },
+  deleted: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
   },
 }, {
   tableName: 'orders'

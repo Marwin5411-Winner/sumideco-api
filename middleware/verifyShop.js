@@ -7,9 +7,9 @@ exports.verifyShop = async (req, res, next) => {
     }
 
     try {
-        const shop = await sequelize.shops.findOne({ where: { id: shopid } });
+        const shop = await sequelize.shops.findOne({ where: { id: shopid, status: 'active' } });
         if (!shop) {
-            return res.status(404).send("Shop not found");
+            return res.status(404).send("Shop not found or Shop is not active or suspended");
         }
         req.shop = shop;
         next();
