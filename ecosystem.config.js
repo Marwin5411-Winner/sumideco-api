@@ -38,8 +38,6 @@ module.exports = {
       user: "marwin",
       // SSH host
       host: "141.98.17.209",
-      // SSH Password
-      password: "5419904Marwin.",
       // GIT remote/branch
       ref: "origin/main",
       // GIT remote
