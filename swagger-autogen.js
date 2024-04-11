@@ -9,7 +9,7 @@ const config = {
         title: 'Paxy API Documentation',
         description: '',
     },
-    host: 'localhost:3000',
+    host: process.env.HOST,
     schemes: ['http', 'https'],
 };
 

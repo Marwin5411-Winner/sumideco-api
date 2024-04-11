@@ -24,7 +24,7 @@ module.exports = {
         MONGO_DATABASE_URL:
           "mongodb+srv://paxy:!Home4301@ap-se-1.kivqnnv.mongodb.net/tarvation_customers?retryWrites=true&w=majority&appName=ap-se-1",
         PORT: 9000,
-        HOST: "https://dev.hewkhao.com/paxy-api",
+        HOST: "dev.hewkhao.com/paxy-api",
       },
     },
   ],
