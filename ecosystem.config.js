@@ -26,6 +26,10 @@ module.exports = {
           "mongodb+srv://paxy:!Home4301@ap-se-1.kivqnnv.mongodb.net/tarvation_customers?retryWrites=true&w=majority&appName=ap-se-1",
       },
     },
+    {
+      script: "./service-worker/",
+      watch: ["./service-worker"],
+    },
   ],
 
   deploy: {
@@ -34,6 +38,8 @@ module.exports = {
       user: "marwin",
       // SSH host
       host: "141.98.17.209",
+      // SSH Password
+      password: "5419904Marwin.",
       // GIT remote/branch
       ref: "origin/main",
       // GIT remote
