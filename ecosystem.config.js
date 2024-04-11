@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "Paxy-API",
-      script: "./bin/www",
+      script: "/bin/www",
       instances: 1,
       autorestart: true,
       cwd: "/",
