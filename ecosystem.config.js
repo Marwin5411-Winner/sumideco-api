@@ -5,7 +5,6 @@ module.exports = {
       script: "./bin/www",
       instances: 1,
       autorestart: true,
-      cwd: "/",
       max_memory_restart: "1G",
       watch: ".",
       ignore_watch: ["node_modules", "public", "logs"],
@@ -25,10 +24,6 @@ module.exports = {
         MONGO_DATABASE_URL:
           "mongodb+srv://paxy:!Home4301@ap-se-1.kivqnnv.mongodb.net/tarvation_customers?retryWrites=true&w=majority&appName=ap-se-1",
       },
-    },
-    {
-      script: "./service-worker/",
-      watch: ["./service-worker"],
     },
   ],
 
