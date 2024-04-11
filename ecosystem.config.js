@@ -24,6 +24,7 @@ module.exports = {
         MONGO_DATABASE_URL:
           "mongodb+srv://paxy:!Home4301@ap-se-1.kivqnnv.mongodb.net/tarvation_customers?retryWrites=true&w=majority&appName=ap-se-1",
         PORT: 9000,
+        HOST: "https://dev.hewkhao.com/paxy-api",
       },
     },
   ],
@@ -43,7 +44,7 @@ module.exports = {
       // Path in the server
       path: "/home/marwin/paxy-api",
       // Command run after pull source code
-      'post-deploy' : "npm install && pm2 reload ecosystem.config.js --env production",
+      'post-deploy' : "npm install && pm2 reload ecosystem.config.js --env production && node ./swagger-autogen.js && pm2 save",
     },
   },
 };
