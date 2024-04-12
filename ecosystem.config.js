@@ -27,12 +27,6 @@ module.exports = {
         HOST: "dev.hewkhao.com/paxy-api",
       },
     },
-    {
-      script: "./swagger-autogen.js",
-      env_production: {
-        HOST: "dev.hewkhao.com/paxy-api",
-      },
-    }
   ],
 
   deploy: {
