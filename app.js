@@ -23,7 +23,6 @@ require('./db/sequelize');
 require('./db/mongoose');
 
 
-
 //Custom Middleware
 const { verifyShop } = require('./middleware/verifyShop');
 
