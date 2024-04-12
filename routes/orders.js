@@ -7,30 +7,35 @@ const { verifyShop } = require('../middleware/verifyShop');
 /* GET Orders */
 router.get('/orders/:shopid', verifyShop, function(req, res, next) {
     // #swagger.tags = ['Orders']
+    // #swagger.description = 'Get all orders'
     orders.getOrders(req, res);
 });
 
 /* GET Orders by ID */
 router.get('/orders/:shopid/:id', verifyShop, function(req, res, next) {
     // #swagger.tags = ['Orders']
+    // #swagger.description = 'Get order by id with shopid'
     orders.getOrderById(req, res);
 });
 
 /* POST create a new Order */
 router.post('/orders/:shopid', verifyShop, function(req, res, next) {
     // #swagger.tags = ['Orders']
+    // #swagger.description = 'Create a new order'
     orders.createOrder(req, res);
 });
 
 /* PUT update a Order */
 router.put('/orders/:shopid/:id', verifyShop, function(req, res, next) {
     // #swagger.tags = ['Orders']
+    // #swagger.description = 'Update a order'
     orders.updateOrder(req, res);
 });
 
 /* DELETE a Order */
 router.delete('/orders/:shopid/:id', verifyShop, function(req, res, next) {
     // #swagger.tags = ['Orders']
+    // #swagger.description = 'Delete a order'
     orders.deleteOrder(req, res);
 });
 

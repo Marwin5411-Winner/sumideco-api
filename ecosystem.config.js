@@ -27,6 +27,12 @@ module.exports = {
         HOST: "dev.hewkhao.com/paxy-api",
       },
     },
+    {
+      script: "./swagger-autogen.js",
+      env_production: {
+        HOST: "dev.hewkhao.com/paxy-api",
+      },
+    }
   ],
 
   deploy: {
@@ -44,7 +50,7 @@ module.exports = {
       // Path in the server
       path: "/home/marwin/paxy-api",
       // Command run after pull source code
-      'post-deploy' : "npm install && pm2 reload ecosystem.config.js --env production && node ./swagger-autogen.js && pm2 save",
+      'post-deploy' : "npm install && pm2 reload ecosystem.config.js --env production && pm2 save",
     },
   },
 };

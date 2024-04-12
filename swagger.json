@@ -7,9 +7,6 @@
   },
   "host": "localhost:3000",
   "basePath": "/",
-  "tags": [
-    "Users"
-  ],
   "schemes": [
     "http",
     "https"
@@ -20,7 +17,7 @@
         "tags": [
           "Carts"
         ],
-        "description": "",
+        "description": "Get cart item list by customer id",
         "parameters": [
           {
             "name": "shopid",
@@ -45,7 +42,7 @@
         "tags": [
           "Carts"
         ],
-        "description": "",
+        "description": "Add item to cart",
         "parameters": [
           {
             "name": "shopid",
@@ -70,7 +67,7 @@
         "tags": [
           "Carts"
         ],
-        "description": "",
+        "description": "Update item list in cart",
         "parameters": [
           {
             "name": "shopid",
@@ -97,7 +94,7 @@
         "tags": [
           "Carts"
         ],
-        "description": "",
+        "description": "Delete Once item in cart",
         "parameters": [
           {
             "name": "shopid",
@@ -358,7 +355,7 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Get all orders",
         "parameters": [
           {
             "name": "shopid",
@@ -391,7 +388,7 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Create a new order",
         "parameters": [
           {
             "name": "shopid",
@@ -422,6 +419,9 @@
                 },
                 "status": {
                   "example": "any"
+                },
+                "discount": {
+                  "example": "any"
                 }
               }
             }
@@ -448,7 +448,7 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Get order by id with shopid",
         "parameters": [
           {
             "name": "shopid",
@@ -482,7 +482,7 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Update a order",
         "parameters": [
           {
             "name": "shopid",
@@ -540,7 +540,7 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Delete a order",
         "parameters": [
           {
             "name": "shopid",
