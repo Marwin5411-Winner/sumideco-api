@@ -5,11 +5,12 @@ const SERVER_CONFIG = require('./config');
 
 //Get args from command line
 const args = process.argv.slice(2);
+let host;
 
 if (args[0] === 'prod') {
-    const host = 'dev.hewkhao.com/paxy-api';
+    host = 'dev.hewkhao.com/paxy-api';
 } else {
-    const host = SERVER_CONFIG.server.host;
+    host = SERVER_CONFIG.server.host;
 }
 
 const outputFile = './swagger.json';
