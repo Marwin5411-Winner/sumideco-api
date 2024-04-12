@@ -46,6 +46,16 @@ exports.createCustomer = async (req, res) => {
   const { name, email, password, phone } = req.body;
   console.log("req.body", req.body);
   try {
+
+    //Check if email already exists
+    const user = await sequelize.customers.findOne({
+      where: { email, shop_id: shopid, deleted: 0 },
+    });
+
+    if (user) {
+      return res.status(400).send("Email already exists");
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const createdUser = await sequelize.customers.create({
@@ -79,9 +89,10 @@ exports.updateCustomer = async (req, res) => {
       return res.status(404).send("User not found");
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : user.password;
+   
 
-    await user.update({ name, email, password: hashedPassword });
+    await user.update({ name: name || user.name, email: email || user.email , password: hashedPassword || user.password });
 
     res.status(200).send(user);
   } catch (error) {

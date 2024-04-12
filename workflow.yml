@@ -1,0 +1,66 @@
+version: "1.1"
+name: API TEST
+env:
+  host: dev.hewkhao.com/paxy-api
+  shop_id: 1
+  schema: https
+tests:
+  customers:
+    steps:
+      - name: GET CUSTOMERS
+        http:
+          url: ${{env.schema}}://${{env.host}}/customers/${{env.shop_id}}
+          method: GET
+          check:
+            status: /^20/
+      - name: CREATE CUSTOMER
+        http:
+          url: ${{env.schema}}://${{env.host}}/customers/${{env.shop_id}}
+          method: POST
+          headers:
+            Content-Type: application/json
+          json:
+            name: John Doe
+            email: John@example.com
+            password: "123456"
+            phone: "123456789"
+          captures:
+            customer_id:
+              jsonpath: $.id
+          check:
+            status: 201
+      - name: GET CUSTOMER
+        http:
+          url: ${{env.schema}}://${{env.host}}/customers/${{env.shop_id}}/${{captures.customer_id}}
+          method: GET
+          check:
+            status: 200
+      - name: UPDATE CUSTOMER (Full UPDATE)
+        http:
+          url: ${{env.schema}}://${{env.host}}/customers/${{env.shop_id}}/${{captures.customer_id}}
+          method: PUT
+          headers:
+            Content-Type: application/json
+          json:
+            name: John Doe
+            email: Johndoe@example.com
+            password: "123456"
+            phone: "123456789"
+          check:
+            status: 200
+      - name: UPDATE CUSTOMER (Partial UPDATE)
+        http:
+          url: ${{env.schema}}://${{env.host}}/customers/${{env.shop_id}}/${{captures.customer_id}}
+          method: PUT
+          headers:
+            Content-Type: application/json
+          json:
+            email: John@example.com
+          check:
+            status: 200
+      - name: DELETE CUSTOMER
+        http:
+          url: ${{env.schema}}://${{env.host}}/customers/${{env.shop_id}}/${{captures.customer_id}}
+          method: DELETE
+          check:
+            status: 200

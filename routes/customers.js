@@ -163,6 +163,27 @@ router.post('/customers/login/:shopid', verifyShop, (req, res) => {
 });
 
 
+/**
+ * @swagger
+ * /customers/{shopid}/{id}:
+ * delete:
+ * summary: Delete customer by id from shop
+ * tags: [customers]
+ * responses:
+ * 200:
+ * description: Success
+ * 400:
+ * description: Bad Request
+ * 500:
+ * description: Internal Server Error
+ */
+router.delete('/customers/:shopid/:id', verifyShop, (req, res) => {
+    // #swagger.tags = ['Customers']
+    // #swagger.description = 'Delete customer by id with shopid'
+    customers.deleteCustomer(req, res);
+});
+
+
 
 
 
