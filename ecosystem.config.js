@@ -44,7 +44,7 @@ module.exports = {
       // Path in the server
       path: "/home/marwin/paxy-api",
       // Command run after pull source code
-      'post-deploy' : "npm install && pm2 reload ecosystem.config.js --env production && pm2 save",
+      'post-deploy' : "npm install && pm2 reload ecosystem.config.js --env production && npm run generate-swagger && pm2 save",
     },
   },
 };
