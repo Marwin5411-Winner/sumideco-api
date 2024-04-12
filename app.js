@@ -23,8 +23,6 @@ require('./db/sequelize');
 require('./db/mongoose');
 
 
-//Swagger Autogen
-require('./swagger-autogen')();
 
 //Custom Middleware
 const { verifyShop } = require('./middleware/verifyShop');

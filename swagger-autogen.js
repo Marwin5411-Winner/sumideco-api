@@ -1,5 +1,5 @@
 const swaggerAutogen = require('swagger-autogen')();
-require('dotenv').config();
+const SERVER_CONFIG = require('./config');
 
 const outputFile = './swagger.json';
 const endpointsFiles = ['./routes/*.js'];
@@ -9,7 +9,7 @@ const config = {
         title: 'Paxy API Documentation',
         description: '',
     },
-    host: process.env.HOST,
+    host: SERVER_CONFIG.server.host,
     schemes: ['http', 'https'],
 };
 
