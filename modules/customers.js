@@ -135,11 +135,12 @@ exports.loginCustomer = async (req, res) => {
     if (!isMatch) {
       return res.status(400).send("Invalid credentials");
     }
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    // Generate token 
+    //Expires in 12 hours
+    const token = jwt.sign({ id: user.id, email: user.email, shop_id: user.shop_id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 12 }, process.env.JWT_SECRET);
 
-    res.status(200).send({ token });
+    user.password = undefined;
+    res.status(200).send({  user, token });
   } catch (error) {
     console.error(error);
     res.status(500).send(error);

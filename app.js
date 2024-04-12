@@ -14,9 +14,8 @@ const ordersRouter = require('./routes/orders');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
-//Passport middleware
-const passport = require('passport');
-// require('./middleware/jwt_customer');
+
+
 
 //Database connection
 require('./db/sequelize');
@@ -32,7 +31,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(passport.initialize());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
