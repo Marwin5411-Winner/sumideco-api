@@ -115,7 +115,11 @@ exports.deleteCustomer = async (req, res) => {
         where: { id, shop_id: shopid, deleted: 0 },
     })
 
-    res.status(200).send("User deleted successfully");
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    return res.status(200).send("User deleted successfully");
   } catch (error) {
     console.error(error);
     res.status(500).send(error);
@@ -123,17 +127,19 @@ exports.deleteCustomer = async (req, res) => {
 };
 
 exports.loginCustomer = async (req, res) => {
+
+
   const { email, password } = req.body;
   try {
     let user = await sequelize.customers.findOne({
       where: { email },
     });
     if (!user) {
-      return res.status(404).send("User not found");
+      return res.status(401).send("User not found or Email is incorrect");
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).send("Invalid credentials");
+      return res.status(400).send("Invalid Credentials");
     }
     // Generate token 
     //Expires in 12 hours

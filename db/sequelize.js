@@ -205,6 +205,29 @@ const orders = sequelize.define('Orders', {
   tableName: 'orders'
 });
 
+const carts = sequelize.define('Carts', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    unique: true,
+  },
+  customer_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    unique: true,
+  },
+  item_list: {
+    // [{product_id, quantity}]
+    type: DataTypes.JSON,
+    allowNull: false,
+  },
+  shop_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+})
+
 
 
 
