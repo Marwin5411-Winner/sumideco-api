@@ -15,15 +15,13 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
 
-
-
 //Database connection
 require('./db/sequelize');
 require('./db/mongoose');
 
 
 //Custom Middleware
-const { verifyShop } = require('./middleware/verifyShop');\
+const { verifyShop } = require('./middleware/verifyShop');
 
 
 

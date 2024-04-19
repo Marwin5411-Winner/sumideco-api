@@ -119,6 +119,10 @@ exports.deleteProduct = async (req, res) => {
         },
     });
 
+    if (!product) {
+        return res.status(404).json({ error: "Product not found!" });
+    }
+
     res.status(201).json('Product Deleted! \n' + product);
     }
     catch (error) {
