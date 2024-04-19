@@ -44,7 +44,11 @@ exports.getCustomerById = async (req, res) => {
 exports.createCustomer = async (req, res) => {
   const { shopid } = req.params;
   const { name, email, password, phone } = req.body;
-  console.log("req.body", req.body);
+
+  if (!name || !email || !password || !phone) {
+    return res.status(400).send("All fields are required to register a user");
+  }
+  
   try {
 
     //Check if email already exists

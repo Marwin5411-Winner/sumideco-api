@@ -1,4 +1,4 @@
-var express = require('express');
+var app = require('express')();
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -23,9 +23,9 @@ require('./db/mongoose');
 
 
 //Custom Middleware
-const { verifyShop } = require('./middleware/verifyShop');
+const { verifyShop } = require('./middleware/verifyShop');\
 
-var app = express();
+
 
 app.use(logger('dev'));
 app.use(express.json());

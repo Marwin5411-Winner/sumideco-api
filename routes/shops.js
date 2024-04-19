@@ -7,7 +7,7 @@
 
 var express = require('express');
 var router = express.Router();
-const { createShop, getShops, getShopById, loginShop } = require('../modules/shops');
+const { createShop, getShops, getShopById, loginShop, updateShop } = require('../modules/shops');
 
 
 /* GET shops listing. */
@@ -31,13 +31,13 @@ router.post('/shops/create', (req, res, next) => {
 /* PUT update user. */
 router.put('/shops/update/:id', (req, res, next) => {
   // #swagger.tags = ['Shops']
-  res.send('respond with a resource');
+  updateShop(req, res);
 });
 
 /* DELETE delete user. */
 router.delete('/shops/delete/:id', (req, res, next) => {
   // #swagger.tags = ['Shops']
-  res.send('respond with a resource');
+  deleteShop(req, res);
 });
 
 /* POST Login user */

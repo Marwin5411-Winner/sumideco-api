@@ -41,6 +41,12 @@ exports.getShopById = async (req, res) => {
 exports.createShop = async (req, res) => {
   const { name, email, password, shop_title, shop_description } = req.body;
   console.log("req.body", req.body);
+
+  if (!name || !email || !password || !shop_title || !shop_description) {
+    return res.status(400).send("All fields are required");
+  }
+
+
   try {
     //TODO: Add validation to user for check if user already exists in mongodb Database
     //PASS 
@@ -60,6 +66,64 @@ exports.createShop = async (req, res) => {
       .then((e) => {
         res.status(201).send(e);
       });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error);
+  }
+};
+
+// PUT UPDATE SHOP
+//ADMIN ACCESS
+exports.updateShop = async (req, res) => {
+  const { id } = req.params;
+  const { name, email, password, shop_title, shop_description } = req.body;
+
+  if (id == "undefined" || id == null || id == "") {
+    return res.status(400).send("Shop ID is required");
+  }
+
+  try {
+    const shop = await sequlize.shops.findOne({ where: { id } });
+    if (!shop) {
+      return res.status(404).send("Shop not found");
+    }
+
+    const updatedShop = await sequlize.shops.update(
+      { name, email, password, shop_title, shop_description },
+      { where: { id } }
+    );
+    res.status(200).send(updatedShop);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error);
+  }
+};
+
+// DELETE SHOP
+//ADMIN ACCESS
+exports.deleteShop = async (req, res) => {
+  const { id } = req.params;
+
+  if (id == "undefined" || id == null || id == "") {
+    return res.status(400).send("Shop ID is required");
+  }
+
+  try {
+    const shop = await sequlize.shops.findOne({ where: { id } });
+    if (!shop) {
+      return res.status(404).send("Shop not found");
+    }
+
+    const deletedShop = await sequlize.shops.update(
+      { deleted: 1 },
+      { where: { id } }
+    );
+
+    if (!deletedShop) {
+      return res.status(404).send("Shop not found");
+    }
+
+    res.status(200).send(deletedShop);
   } catch (error) {
     console.error(error);
     res.status(500).send(error);
