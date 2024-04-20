@@ -1,4 +1,4 @@
-var express = require('express')();
+var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -24,6 +24,8 @@ require('./db/mongoose');
 const { verifyShop } = require('./middleware/verifyShop');
 
 const app = express();
+
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
