@@ -132,11 +132,15 @@ exports.deleteCustomer = async (req, res) => {
 
 exports.loginCustomer = async (req, res) => {
 
-
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).send("All fields are required");
+  }
+
   try {
     let user = await sequelize.customers.findOne({
-      where: { email },
+      where: { email, deleted: 0 },
     });
     if (!user) {
       return res.status(401).send("User not found or Email is incorrect");
