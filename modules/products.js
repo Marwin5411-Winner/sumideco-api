@@ -50,14 +50,14 @@ exports.getProductById = async (req, res) => {
 exports.createProduct = async (req, res) => {
     try {
     const shopId = req.params.shopid;
-    const { name, description, price, quantity, banner, images, weight, size } = req.body;
+    const { name, description, price, quantity, thumbnail, images, weight, size } = req.body;
 
     const product = await sequelize.products.create({
         name,
         description,
         price,
         quantity,
-        banner,
+        thumbnail,
         images,
         weight,
         shop_id: shopId,
