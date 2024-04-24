@@ -119,11 +119,13 @@ exports.deleteCustomer = async (req, res) => {
         where: { id, shop_id: shopid, deleted: 0 },
     })
 
+
+    //Check if user not exists
     if (!user) {
       return res.status(404).send("User not found");
     }
 
-    return res.status(200).send("User deleted successfully");
+    return res.status(200).send("User: " + user +" \n deleted successfully");
   } catch (error) {
     console.error(error);
     res.status(500).send(error);

@@ -115,7 +115,7 @@ const products = sequelize.define('Products', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  banner: {
+  thumbnail : {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
