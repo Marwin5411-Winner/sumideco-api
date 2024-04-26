@@ -14,7 +14,7 @@ if (args[0] === 'prod') {
 }
 
 const outputFile = './swagger.json';
-const endpointsFiles = ['./routes/*.js'];
+const endpointsFiles = ['./app.js'];
 
 const config = {
     info: {
@@ -23,6 +23,34 @@ const config = {
     },
     host: host,
     schemes: ['http', 'https'],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+    tags: [
+        {
+            name: 'Shops',
+            description: 'APIs for Shops'
+        },
+        {
+            name: 'Customers',
+            description: 'APIs for Customers'
+        },
+        {
+            name: 'Products',
+            description: 'APIs for Products'
+        },
+        {
+            name: 'Orders',
+            description: 'APIs for Orders'
+        },
+    ],
+    securityDefinitions: {
+        apiKeyAuth: {
+          type: 'token',
+          in: 'header', // can be 'header', 'query' or 'cookie'
+          name: 'authorization', // name of the header, query parameter or cookie
+          description: 'Any value can be used as token'
+        }
+      }
 };
 
 swaggerAutogen(outputFile, endpointsFiles, config);

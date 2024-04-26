@@ -28,10 +28,10 @@ const { verifyShop } = require('../middleware/verifyShop');
  * 500:
  * description: Internal Server Error
  */
-router.get('/customers/:shopid', verifyShop, (req, res) => {
+router.get('/:shopid', verifyShop, (req, res) => {
     // #swagger.tags = ['Customers']
     // #swagger.description = 'Get all customers'
-    customers.getCustomers(req, res);
+    customers.getCustomersByShopId(req, res);
 });
 
 /**
@@ -48,48 +48,13 @@ router.get('/customers/:shopid', verifyShop, (req, res) => {
  * 500:
  * description: Internal Server Error
  */
-router.get('/customers/:shopid/:id', verifyShop, (req, res) => {
+router.get('/:shopid/:id', verifyShop, (req, res) => {
     // #swagger.tags = ['Customers']
     // #swagger.description = 'Get customer by id with shopid'
     customers.getCustomerById(req, res);
 });
 
-/**
- * @swagger
- * /customers/{shopid}:
- * post:
- * summary: Create customer
- * tags: [customers]
- * requestBody:
- * required: true
- * content:
- * application/json:
- * schema:
- * type: object
- * properties:
- * name:
- * type: string
- * email:
- * type: string
- * password:
- * type: string
- * required:
- * - name
- * - email
- * - password
- * responses:
- * 201:
- * description: Created
- * 400:
- * description: Bad Request
- * 500:
- * description: Internal Server Error
- */
-router.post('/customers/:shopid', verifyShop, (req, res) => {
-    // #swagger.tags = ['Customers']
-    // #swagger.description = 'Create customer'
-    customers.createCustomer(req, res);
-});
+
 
 /**
  * @swagger
@@ -122,7 +87,7 @@ router.post('/customers/:shopid', verifyShop, (req, res) => {
  * 500:
  * description: Internal Server Error
  */
-router.put('/customers/:shopid/:id', verifyShop,(req, res) => {
+router.put('/:shopid/:id', verifyShop,(req, res) => {
     // #swagger.tags = ['Customers']
     // #swagger.description = 'Update customer by id with shopid'
     customers.updateCustomer(req, res);
@@ -156,7 +121,7 @@ router.put('/customers/:shopid/:id', verifyShop,(req, res) => {
  * 500:
  * description: Internal Server Error
  */
-router.post('/customers/login/:shopid', verifyShop, (req, res) => {
+router.post('/login/:shopid', verifyShop, (req, res) => {
     // #swagger.tags = ['Customers']
     // #swagger.description = 'Login customer'
     customers.loginCustomer(req, res);

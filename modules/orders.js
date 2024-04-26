@@ -3,9 +3,15 @@ const moment = require("moment");
 const { checkProductByIdwithShopId, checkProductQuantity, getProductById } = require("../functions/products");
 
 
-exports.getOrders = async (req, res) => {
+exports.getOrdersByShopId = async (req, res) => {
+    const shopId = req.params.shopid;
+
+    if (req.shop?.id != shopId) {
+        return res.status(403).send(global.HTTP_CODE.FORBIDDEN + ": You are not authorized to view this shop's orders")
+    }
+
     try {
-        const shopId = req.params.shopid;
+        
         const status = req.query.status ? req.query.status : null;
         const orders = await sequelize.orders.findAll({
             where: {
@@ -23,6 +29,7 @@ exports.getOrders = async (req, res) => {
 exports.getOrderById = async (req, res) => {
     try {
         const shopId = req.params.shopid;
+
         const orderId = req.params.id;
         let order = await sequelize.orders.findOne({
             where: {

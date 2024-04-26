@@ -9,6 +9,8 @@ var shopsRouter = require('./routes/shops');
 const customersRouter = require('./routes/customers');
 const productsRouter = require('./routes/products');
 const ordersRouter = require('./routes/orders');
+const loginRouter = require('./routes/login');
+const registerRouter = require('./routes/register');
 
 
 const swaggerUi = require('swagger-ui-express');
@@ -19,9 +21,10 @@ const swaggerDocument = require('./swagger.json');
 require('./db/sequelize');
 require('./db/mongoose');
 
+global.HTTP_CODE = require('./HTTP_CODE');
 
 //Custom Middleware
-const { verifyShop } = require('./middleware/verifyShop');
+const { validateJWT } = require('./middleware/validateJWT');
 
 const app = express();
 
@@ -33,10 +36,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/', shopsRouter);
-app.use('/', customersRouter);
-app.use('/', productsRouter);
-app.use('/', ordersRouter);
+app.use('/shops', validateJWT, shopsRouter); 
+app.use('/customers', validateJWT, customersRouter);
+app.use('/products', validateJWT, productsRouter);
+app.use('/orders', validateJWT, ordersRouter);
+app.use('/login', loginRouter);
+app.use('/register', registerRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 module.exports = app;
