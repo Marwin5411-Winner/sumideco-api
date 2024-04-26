@@ -3,8 +3,17 @@ const jwt = require("jsonwebtoken");
 const sequelize = require("../db/sequelize");
 const config = require("../config");
 
-exports.getCustomers = async (req, res) => {
+exports.getCustomersByShopId = async (req, res) => {
   const { shopid } = req.params;
+
+  if (shopid == "undefined" || shopid == null || shopid == "") {
+    return res.status(400).send(global.HTTP_CODE.BAD_REQUEST + ": Shop ID is required");
+  }
+
+  if (req.shop?.id !== shopid) {
+    return res.status(403).send(global.HTTP_CODE.FORBIDDEN + ": You are not authorized to view this shop's customers");
+  }
+
   try {
     const users = await sequelize.customers.findAll({
       attributes: { exclude: ["password"] },
@@ -26,6 +35,11 @@ exports.getCustomerById = async (req, res) => {
     return res.status(400).send("User ID is required");
   }
 
+  //Check if user is authorized to view this shop's customer
+  if (req.shop?.id !== shopid || req.user?.id !== id) {
+    return res.status(403).send(global.HTTP_CODE.FORBIDDEN + ": You are not authorized to view this shop's customer");
+  }
+
   try {
     const user = await sequelize.customers.findOne({
       attributes: { exclude: ["password"] },
@@ -41,41 +55,7 @@ exports.getCustomerById = async (req, res) => {
   }
 };
 
-exports.createCustomer = async (req, res) => {
-  const { shopid } = req.params;
-  const { name, email, password, phone } = req.body;
 
-  if (!name || !email || !password || !phone) {
-    return res.status(400).send("All fields are required to register a user");
-  }
-  
-  try {
-
-    //Check if email already exists
-    const user = await sequelize.customers.findOne({
-      where: { email, shop_id: shopid, deleted: 0 },
-    });
-
-    if (user) {
-      return res.status(400).send("Email already exists");
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const createdUser = await sequelize.customers.create({
-      name,
-      email,
-      password: hashedPassword,
-      phone,
-      shop_id: shopid,
-    });
-
-    res.status(201).send(createdUser);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error);
-  }
-};
 
 exports.updateCustomer = async (req, res) => {
   const { id, shopid } = req.params;
@@ -83,6 +63,11 @@ exports.updateCustomer = async (req, res) => {
 
   if (id == "undefined" || id == null || id == "") {
     return res.status(400).send("User ID is required");
+  }
+
+  //Check if user is authorized to update this shop's customer
+  if (req.shop?.id !== shopid || req.user?.id !== id) {
+    return res.status(403).send(global.HTTP_CODE.FORBIDDEN + ": You are not authorized to update this shop's customer");
   }
 
   try {
@@ -112,6 +97,11 @@ exports.deleteCustomer = async (req, res) => {
     return res.status(400).send("User ID is required");
   }
 
+  //Check if user is authorized to delete this shop's customer
+  if (req.shop?.id !== shopid || req.user?.id !== id) {
+    return res.status(403).send(global.HTTP_CODE.FORBIDDEN + ": You are not authorized to delete this shop's customer");
+  }
+
   try {
     const user = await sequelize.customers.update({
         deleted: 1,
@@ -132,33 +122,3 @@ exports.deleteCustomer = async (req, res) => {
   }
 };
 
-exports.loginCustomer = async (req, res) => {
-
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).send("All fields are required");
-  }
-
-  try {
-    let user = await sequelize.customers.findOne({
-      where: { email, deleted: 0 },
-    });
-    if (!user) {
-      return res.status(401).send("User not found or Email is incorrect");
-    }
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).send("Invalid Credentials");
-    }
-    // Generate token 
-    //Expires in 12 hours
-    const token = jwt.sign({ id: user.id, email: user.email, shop_id: user.shop_id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 12 }, process.env.JWT_SECRET);
-
-    user.password = undefined;
-    res.status(200).send({  user, token });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error);
-  }
-};

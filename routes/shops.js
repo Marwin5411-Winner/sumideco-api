@@ -11,37 +11,31 @@ const { createShop, getShops, getShopById, loginShop, updateShop } = require('..
 
 
 /* GET shops listing. */
-router.get('/shops', function(req, res, next) {
+router.get('/', function(req, res, next) {
   // #swagger.tags = ['Shops']
   getShops(req, res);
 });
 
 /* GET user */
-router.get('/shops/:id', function(req, res, next) {
+router.get('/:id', function(req, res, next) {
   // #swagger.tags = ['Shops']
   getShopById(req, res);
 });
 
-/* POST create user. */
-router.post('/shops/create', (req, res, next) => {
-  // #swagger.tags = ['Shops']
-  createShop(req, res);
-});
-
 /* PUT update user. */
-router.put('/shops/update/:id', (req, res, next) => {
+router.put('/update/:id', (req, res, next) => {
   // #swagger.tags = ['Shops']
   updateShop(req, res);
 });
 
 /* DELETE delete user. */
-router.delete('/shops/delete/:id', (req, res, next) => {
+router.delete('/delete/:id', (req, res, next) => {
   // #swagger.tags = ['Shops']
   deleteShop(req, res);
 });
 
 /* POST Login user */
-router.post('/shops/login', (req, res, next) => {
+router.post('/login', (req, res, next) => {
   // #swagger.tags = ['Shops']
   loginShop(req, res);
 });

@@ -1,4 +1,4 @@
-const sequlize = require("../db/sequelize");
+const sequelize = require("../db/sequelize");
 const mongoose = require("../db/mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -6,9 +6,14 @@ const moment = require("moment");
 
 // GET ALL USERS
 //ADMIN ACCESS
+//SHOP ACCESS
 exports.getShops = async (req, res) => {
+  if (req.admin?.role !== "Admin") {
+    return res.status(403).send(global.HTTP_CODE.FORBIDDEN);
+  }
+
   try {
-    const shops = await sequlize.shops.findAll();
+    const shops = await sequelize.shops.findAll();
     res.status(200).send(shops);
   } catch (error) {
     console.error(error);
@@ -25,47 +30,11 @@ exports.getShopById = async (req, res) => {
   }
 
   try {
-    const shop = await sequlize.shops.findOne({ where: { id } });
+    const shop = await sequelize.shops.findOne({ where: { id } });
     if (!shop) {
       return res.status(404).send("Shop not found");
     }
     res.status(200).send(shop);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error);
-  }
-};
-
-// POST CREATE SHOP (REGISTER)
-//PANEL
-exports.createShop = async (req, res) => {
-  const { name, email, password, shop_title, shop_description } = req.body;
-  console.log("req.body", req.body);
-
-  if (!name || !email || !password || !shop_title || !shop_description) {
-    return res.status(400).send("All fields are required");
-  }
-
-
-  try {
-    //TODO: Add validation to user for check if user already exists in mongodb Database
-    //PASS 
-    if (await mongoose.ShopCustomers.findOne({ email: email })) {
-      return res.status(400).send("User already exists");
-    }
-
-    
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const createdShop = await mongoose.ShopCustomers.create({ name, email, password: hashedPassword });
-
-    // console.log("createdUser", createdUser);
-
-    await sequlize.shops
-      .create({ ssoId: createdShop._id.toString(), name, shop_title, shop_description})
-      .then((e) => {
-        res.status(201).send(e);
-      });
   } catch (error) {
     console.error(error);
     res.status(500).send(error);
@@ -82,13 +51,23 @@ exports.updateShop = async (req, res) => {
     return res.status(400).send("Shop ID is required");
   }
 
+  //Check if user is authorized to update this shop
+  if (req.shop?.id !== id || req.admin?.role !== "Admin") {
+    return res
+      .status(403)
+      .send(
+        global.HTTP_CODE.FORBIDDEN +
+          ": You are not authorized to update this shop"
+      );
+  }
+
   try {
-    const shop = await sequlize.shops.findOne({ where: { id } });
+    const shop = await sequelize.shops.findOne({ where: { id } });
     if (!shop) {
-      return res.status(404).send("Shop not found");
+      return res.status(404).send(global.HTTP_CODE.NOT_FOUND + ": Shop not found");
     }
 
-    const updatedShop = await sequlize.shops.update(
+    const updatedShop = await sequelize.shops.update(
       { name, email, password, shop_title, shop_description },
       { where: { id } }
     );
@@ -104,17 +83,22 @@ exports.updateShop = async (req, res) => {
 exports.deleteShop = async (req, res) => {
   const { id } = req.params;
 
+  if (req.admin?.role !== "Admin") {
+    return res.status(403).send(global.HTTP_CODE.FORBIDDEN);
+  }
+
   if (id == "undefined" || id == null || id == "") {
     return res.status(400).send("Shop ID is required");
   }
+  
 
   try {
-    const shop = await sequlize.shops.findOne({ where: { id } });
+    const shop = await sequelize.shops.findOne({ where: { id } });
     if (!shop) {
       return res.status(404).send("Shop not found");
     }
 
-    const deletedShop = await sequlize.shops.update(
+    const deletedShop = await sequelize.shops.update(
       { deleted: 1 },
       { where: { id } }
     );
@@ -124,45 +108,6 @@ exports.deleteShop = async (req, res) => {
     }
 
     res.status(200).send(deletedShop);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error);
-  }
-};
-
-//POST LOGIN SHOP PANEL
-exports.loginShop = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    let shop = await mongoose.ShopCustomers.findOne({
-      email: email,
-    });
-
-    if (!shop) {
-      return res.status(404).send("User not found");
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("hashedPassword", hashedPassword);
-    
-    const isMatch = await bcrypt.compare(password, shop.password);
-    if (!isMatch) {
-      return res.status(400).send("Invalid password");
-    }
-
-    const token = jwt.sign({ ssoid: shop._id.toString(), email: shop.email }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
-
-    const updatedUser = await mongoose.ShopCustomers.updateOne(
-      { email: email },
-      { panelAccessToken: { accessToken: token, expiresIn: moment().add('1day') } }
-    );
-
-    res.status(200).send({
-      token,
-      shop,
-    });
   } catch (error) {
     console.error(error);
     res.status(500).send(error);
