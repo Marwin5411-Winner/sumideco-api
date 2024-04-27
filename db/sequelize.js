@@ -226,7 +226,8 @@ const carts = sequelize.define('Carts', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-})
+});
+
 
 
 

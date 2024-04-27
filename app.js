@@ -3,7 +3,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 require('dotenv').config();
-
+var cors = require('cors')
 var indexRouter = require('./routes/index');
 var shopsRouter = require('./routes/shops');
 const customersRouter = require('./routes/customers');
@@ -23,12 +23,17 @@ require('./db/mongoose');
 
 global.HTTP_CODE = require('./HTTP_CODE');
 
+var corsOptions = {
+    origin: false,
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }
+
 //Custom Middleware
 const { validateJWT } = require('./middleware/validateJWT');
 
 const app = express();
 
-
+app.use(cors(corsOptions))
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
