@@ -24,9 +24,9 @@ require('./db/mongoose');
 global.HTTP_CODE = require('./HTTP_CODE');
 
 var corsOptions = {
-    origin: false,
+    origin: ['http://localhost:3000', 'https://dev.hewkhao.com', 'https://hewkhao.com'],
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-  }
+}
 
 //Custom Middleware
 const { validateJWT } = require('./middleware/validateJWT');
