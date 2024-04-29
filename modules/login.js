@@ -33,7 +33,7 @@ exports.loginShop = async (req, res) => {
         return res.status(404).send(global.HTTP_CODE.NOT_FOUND + ": Shop not found " + shop._id.toString());
       }
   
-      const token = jwt.sign({ shop_id: paxy_shop.id, ssoid: shop._id.toString(), email: shop.email, role: 'Shop', exp }, process.env.JWT_SECRET);
+      const token = jwt.sign({ id: paxy_shop.id, ssoid: shop._id.toString(), email: shop.email, role: 'Shop', exp }, process.env.JWT_SECRET);
   
       await mongoose.ShopCustomers.updateOne(
         { email: email },
