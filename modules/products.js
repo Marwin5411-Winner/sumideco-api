@@ -81,7 +81,7 @@ exports.createProduct = async (req, res) => {
     let thumbnail;
     let images = [];
 
-    if (req.files.length == 0) {
+    if (req.files?.length == 0) {
       return res.status(400).json({ error: "Product thumbnail is required!" });
     } else if (req.files.length >= 1) {
       req.files.forEach((file) => {
@@ -106,7 +106,6 @@ exports.createProduct = async (req, res) => {
 
     return res.status(200).json(product);
   } catch (error) {
-    console.log("error", error);
     return res.status(500).json({ error: error.message });
   }
 };
@@ -125,15 +124,13 @@ exports.updateProduct = async (req, res) => {
     }
 
     const productId = req.params.id;
-    const { name, description, price, quantity } = req.body;
+    const { name, description, price, quantity, weight } = req.body;
 
     let thumbnail;
     let images = [];
 
-    if (req.files.length == 0) {
-      return res.status(400).json({ error: "Product thumbnail is required!" });
-    } else if (req.files.length >= 1) {
-      req.files.forEach((file) => {
+    if (req.files?.length >= 1) {
+      req.files?.forEach((file) => {
         if (file.fieldname === "thumbnail") {
           thumbnail = file?.publicUrl;
         } else if (file.fieldname === "images") {
@@ -176,6 +173,7 @@ exports.updateProduct = async (req, res) => {
 
     res.json(product);
   } catch (error) {
+    console.log("error", error);
     res.status(500).json({ error: error.message });
   }
 };
