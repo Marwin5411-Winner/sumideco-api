@@ -9,8 +9,12 @@ var shopsRouter = require('./routes/shops');
 const customersRouter = require('./routes/customers');
 const productsRouter = require('./routes/products');
 const ordersRouter = require('./routes/orders');
+const cartsRouter = require('./routes/carts');
+const productCategoriesRouter = require('./routes/productCategories');
 const loginRouter = require('./routes/login');
 const registerRouter = require('./routes/register');
+const systemsRouter = require('./routes/systems');
+
 
 
 const swaggerUi = require('swagger-ui-express');
@@ -47,6 +51,9 @@ app.use('/products', validateJWT, productsRouter);
 app.use('/orders', validateJWT, ordersRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
+app.use('/carts', validateJWT, cartsRouter);
+app.use('/productCategories', validateJWT, productCategoriesRouter);
+app.use('/systems', systemsRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 module.exports = app;
