@@ -28,6 +28,10 @@ exports.loginShop = async (req, res) => {
       }
   
       const paxy_shop = await sequelize.shops.findOne({ where: { ssoId: shop._id.toString() } });
+
+      if (!paxy_shop) {
+        return res.status(404).send(global.HTTP_CODE.NOT_FOUND + ": Shop not found " + shop._id.toString());
+      }
   
       const token = jwt.sign({ shop_id: paxy_shop.id, ssoid: shop._id.toString(), email: shop.email, role: 'Shop', exp }, process.env.JWT_SECRET);
   
