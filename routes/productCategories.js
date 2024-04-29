@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const productCategories = require("../modules/ProductCategories");
+
+const productCategories = require('../modules/product_Categories');
 
 router.get("/:shopid", (req, res, next) => {
     productCategories.getCategoriesByShopId(req, res);
