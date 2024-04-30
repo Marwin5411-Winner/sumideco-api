@@ -34,12 +34,6 @@ router.delete('/delete/:id', (req, res, next) => {
   deleteShop(req, res);
 });
 
-/* POST Login user */
-router.post('/login', (req, res, next) => {
-  // #swagger.tags = ['Shops']
-  loginShop(req, res);
-});
-
 
 
 

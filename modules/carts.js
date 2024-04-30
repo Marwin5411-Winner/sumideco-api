@@ -5,7 +5,10 @@ const sequelize = require("../db/sequelize");
 exports.getCartByCustomerId = async (req, res) => {
     const { customerid, shopid } = req.params;
     if (!customer_id) {
-        return res.status(400).send("Customer Id is required");
+        return res.status(400).json({
+            success: 0,
+            error: "Customer ID is required",
+        });
     }
 
     try {
@@ -16,12 +19,22 @@ exports.getCartByCustomerId = async (req, res) => {
         });
 
         if (!cart) {
-            return res.status(404).send("Cart not found");
+            return res.status(404).json({
+                success: 0,
+                error: "Cart not found",
+            });
         }
 
-        res.status(200).send(cart);
+        res.status(200).json({
+            success: 1,
+            error: null,
+            data: cart,
+        });
     } catch (error) {
         console.error(error);
-        res.status(500).send(error);
+        res.status(500).json({
+            success: 0,
+            error: error.message,
+        });
     }
 }

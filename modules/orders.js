@@ -7,7 +7,10 @@ exports.getOrdersByShopId = async (req, res) => {
     const shopId = req.params.shopid;
 
     if (req.shop?.id != shopId) {
-        return res.status(403).send(global.HTTP_CODE.FORBIDDEN + ": You are not authorized to view this shop's orders")
+        return res.status(403).json({
+            sucess: 0,
+            error: global.HTTP_CODE.FORBIDDEN + ": You are not allowed to view orders for this shop",
+        })
     }
 
     try {
@@ -20,9 +23,17 @@ exports.getOrdersByShopId = async (req, res) => {
                 deleted: 0,
             },
         });
-        res.json(orders);
+        return res.status(200).json({
+            success: 1,
+            error: null,
+            data: orders,
+        
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            success: 0,
+            error: error.message,
+        });
     }
 }
 
@@ -40,7 +51,10 @@ exports.getOrderById = async (req, res) => {
         });
 
         if (!order) {
-            return res.status(404).json({ error: "Order not found" });
+            return res.status(404).json({
+                success: 0,
+                error: global.HTTP_CODE.NOT_FOUND + ": Order not found",
+            });
         }
 
         // Get Product Details
@@ -51,9 +65,17 @@ exports.getOrderById = async (req, res) => {
         }
 
 
-        res.json(order);
+        return res.status(200).json({
+            success: 1,
+            error: null,
+            data: order,
+        
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            success: 0,
+            error: error.message,
+        });
     }
 }
 
@@ -68,10 +90,16 @@ exports.createOrder = async (req, res) => {
             const product = await checkProductByIdwithShopId(shopId, product_id);
             const productQuantity = await checkProductQuantity(product_id, quantity, shopId);
             if (!product) {
-                return res.status(404).json({ error: "Product not found" });
+                return res.status(404).json({
+                    success: 0,
+                    error: global.HTTP_CODE.NOT_FOUND + ": Product not found \n Product ID : " + product_id,
+                });
             }
             if (!productQuantity) {
-                return res.status(400).json({ error: "Product quantity is not available \n Product ID : " + product_id });
+                return res.status(400).json({
+                    success: 0,
+                    error: global.HTTP_CODE.BAD_REQUEST + ": Product quantity not available \n Product ID : " + product_id,
+                });
             }
         }
 
@@ -87,9 +115,17 @@ exports.createOrder = async (req, res) => {
             shop_id: shopId,
         });
 
-        res.status(201).json(order);
+        return res.status(201).json({
+            success: 1,
+            error: null,
+            data: order,
+        
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            success: 0,
+            error: error.message,
+        });
     }
 }
 
@@ -108,7 +144,10 @@ exports.updateOrder = async (req, res) => {
         });
 
         if (!order) {
-            return res.status(404).json({ error: "Order not found" });
+            return res.status(404).json({
+                success: 0,
+                error: global.HTTP_CODE.NOT_FOUND + ": Order not found",
+            });
         }
 
         await order.update({
@@ -121,9 +160,16 @@ exports.updateOrder = async (req, res) => {
             shop_id: shopId,
         });
 
-        res.json(order);
+        return res.status(200).json({
+            success: 1,
+            error: null,
+            data: order,
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            success: 0,
+            error: error.message,
+        });
     }
 }
 
@@ -141,15 +187,25 @@ exports.deleteOrder = async (req, res) => {
         });
 
         if (!order) {
-            return res.status(404).json({ error: "Order not found" });
+            return res.status(404).json({
+                success: 0,
+                error: global.HTTP_CODE.NOT_FOUND + ": Order not found",
+            });
         }
 
         await order.update({
             deleted: 1,
         });
 
-        res.json(order);
+        return res.status(201).json({
+            success: 1,
+            error: null,
+            data: order,
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            success: 0,
+            error: error.message,
+        });
     }
 }

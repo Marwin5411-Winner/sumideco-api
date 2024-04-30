@@ -7,7 +7,10 @@ exports.getProductsByShopId = async (req, res) => {
   if (shopId == "undefined" || shopId == null || shopId == "") {
     return res
       .status(400)
-      .send(global.HTTP_CODE.BAD_REQUEST + ": Shop ID is required");
+      .json({
+        success: 0,
+        error: global.HTTP_CODE.BAD_REQUEST + ": Shop ID is required",
+      })
   }
 
   try {
@@ -25,14 +28,24 @@ exports.getProductsByShopId = async (req, res) => {
     if (!products) {
       return res
         .status(404)
-        .send(global.HTTP_CODE.NOT_FOUND + ": Products not found");
+        .json({
+            success: 0,
+            error: global.HTTP_CODE.NOT_FOUND + ": Products not found",
+        })
     }
 
-    return res.json(products);
+    return res.status(200).json({
+        success: 1,
+        error: null,
+        data: products,
+    });
   } catch (error) {
     return res
       .status(500)
-      .send(global.HTTP_CODE.INTERNAL_SERVER_ERROR + ": " + error.message);
+      .json({
+        success: 0,
+        error: error.message,
+      })
   }
 };
 
@@ -55,24 +68,35 @@ exports.getProductById = async (req, res) => {
         .send(global.HTTP_CODE.NOT_FOUND + ": Product not found");
     }
 
-    return res.json(product);
+    return res.status(200).json({
+        success: 1,
+        error: null,
+        data: product,
+        
+    });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({
+        success: 0,
+        error: error.message,
+    });
   }
 };
 
 exports.createProduct = async (req, res) => {
   if (!req.body) {
-    return res.status(400).json({ error: "Product Details are required!" });
+    return res.status(400).json({
+        success: 0,
+        error: "Product data is required!",
+    });
   }
 
   if (req.shop?.id != req.params.shopid) {
     return res
       .status(403)
-      .send(
-        global.HTTP_CODE.FORBIDDEN +
-          ": You are not authorized to create product for this shop"
-      );
+      .json({
+        success: 0,
+        error: global.HTTP_CODE.FORBIDDEN + ": You are not authorized to create product for this shop",
+      });
   }
 
   try {
@@ -82,7 +106,10 @@ exports.createProduct = async (req, res) => {
     let images = [];
 
     if (req.files?.length == 0) {
-      return res.status(400).json({ error: "Product thumbnail is required!" });
+      return res.status(400).json({
+        success: 0,
+        error: "Product thumbnail and images are required!",
+      });
     } else if (req.files.length >= 1) {
       req.files.forEach((file) => {
         if (file.fieldname === "thumbnail") {
@@ -104,9 +131,18 @@ exports.createProduct = async (req, res) => {
       shop_id: shopId,
     });
 
-    return res.status(200).json(product);
+    return res.status(200).json({
+        success: 1,
+        error: null,
+        data: product,
+    
+    });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({
+        success: 0,
+        error: error.message,
+    
+    });
   }
 };
 
@@ -117,10 +153,10 @@ exports.updateProduct = async (req, res) => {
     if (req.shop?.id !== shopId) {
       return res
         .status(403)
-        .send(
-          global.HTTP_CODE.FORBIDDEN +
-            ": You are not authorized to update product for this shop"
-        );
+        .json({
+            success: 0,
+            error: global.HTTP_CODE.FORBIDDEN + ": You are not authorized to update product for this shop",
+            });
     }
 
     const productId = req.params.id;
@@ -149,7 +185,10 @@ exports.updateProduct = async (req, res) => {
     });
 
     if (!existsPr) {
-      return res.status(404).json({ error: "Product not found!" });
+      return res.status(404).json({
+        success: 0,
+        error: global.HTTP_CODE.NOT_FOUND + ": Product not found",
+      });
     }
 
     const product = await sequelize.products.update(
@@ -171,10 +210,17 @@ exports.updateProduct = async (req, res) => {
       }
     );
 
-    res.json(product);
+    return res.status(200).json({
+        success: 1,
+        error: null,
+        data: product,
+    });
   } catch (error) {
     console.log("error", error);
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({
+        success: 0,
+        error: error.message,
+    });
   }
 };
 
@@ -186,10 +232,10 @@ exports.deleteProduct = async (req, res) => {
     if (req.shop?.id !== shopId) {
       return res
         .status(403)
-        .send(
-          global.HTTP_CODE.FORBIDDEN +
-            ": You are not authorized to delete product for this shop"
-        );
+        .json({
+            success: 0,
+            error: global.HTTP_CODE.FORBIDDEN + ": You are not authorized to delete product for this shop",
+        });
     }
 
     const product = await sequelize.products.update(
@@ -208,15 +254,26 @@ exports.deleteProduct = async (req, res) => {
     if (!product) {
       return res
         .status(404)
-        .send(global.HTTP_CODE.NOT_FOUND + ": Product not found");
+        .json({
+            success: 0,
+            error: global.HTTP_CODE.NOT_FOUND + ": Product not found",
+        });
     }
 
-    res
+    return res
       .status(201)
-      .send(global.HTTP_CODE.OK + ": Product deleted successfully");
+      .json({
+            success: 1,
+            error: null,
+            data: "Product deleted successfully",
+        });
+
   } catch (error) {
-    res
+    return res
       .status(500)
-      .send(global.HTTP_CODE.INTERNAL_SERVER_ERROR + ": " + error.message);
+      .json({
+            success: 0,
+            error: error.message,
+        });
   }
 };

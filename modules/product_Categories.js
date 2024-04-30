@@ -4,7 +4,10 @@ exports.getCategoriesByShopId = async (req, res) => {
     const shopId = req.params.shopid;
 
     if (shopId == 'undefined' || shopId == null || shopId == '') {
-        return res.status(400).send(global.HTTP_CODE.BAD_REQUEST + ': Shop ID is required');
+        return res.status(400).json({
+            success: 0,
+            error: global.HTTP_CODE.BAD_REQUEST + ': Shop ID is required'
+        })
     }
 
     try {
@@ -18,12 +21,23 @@ exports.getCategoriesByShopId = async (req, res) => {
         });
 
         if (!categories) {
-            return res.status(404).send(global.HTTP_CODE.NOT_FOUND + ': Categories not found');
+            return res.status(404).json({
+                success: 0,
+                error: global.HTTP_CODE.NOT_FOUND + ': Categories not found'
+            });
         }
 
-        return res.status(200).json(categories);
+        return res.status(200).json({
+            success: 1,
+            error: null,
+            data: categories
+        
+        });
     } catch (error) {
-        return res.status(500).send(global.HTTP_CODE.INTERNAL_SERVER_ERROR + ': ' + error.message);
+        return res.status(500).json({
+            success: 0,
+            error: error.message
+        });
     }
 }
 
@@ -42,12 +56,23 @@ exports.getCategoryById = async (req, res) => {
         });
 
         if (!category) {
-            return res.status(404).send(global.HTTP_CODE.NOT_FOUND + ': Category not found');
+            return res.status(404).json({
+                success: 0,
+                error: global.HTTP_CODE.NOT_FOUND + ': Category not found'
+            });
         }
 
-        return res.status(200).json(category);
+        return res.status(200).json({
+            success: 1,
+            error: null,
+            data: category
+        
+        });
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            success: 0,
+            error: error.message
+        });
     }
 }
 
@@ -56,16 +81,26 @@ exports.createCategory = async (req, res) => {
     const { name, description, parentCategoryId } = req.body;
 
     if (req.shop.id != shopId) {
-        return res.status(403).send(global.HTTP_CODE.FORBIDDEN + ': You are not allowed to create category for this shop');
+        return res.status(403).json({
+            success: 0,
+            error: global.HTTP_CODE.FORBIDDEN + ': You are not allowed to create category for this shop'
+        })
     }
 
 
     if (shopId == 'undefined' || shopId == null || shopId == '') {
-        return res.status(400).send(global.HTTP_CODE.BAD_REQUEST + ': Shop ID is required');
+        return res.status(400).json({
+            success: 0,
+            error: global.HTTP_CODE.BAD_REQUEST + ': Shop ID is required'
+        
+        })
     }
 
     if (name == 'undefined' || name == null || name == '') {
-        return res.status(400).send(global.HTTP_CODE.BAD_REQUEST + ': Name is required');
+        return res.status(400).json({
+            success: 0,
+            error: global.HTTP_CODE.BAD_REQUEST + ': Category name is required'
+        })
     }
 
     try {
@@ -76,9 +111,16 @@ exports.createCategory = async (req, res) => {
             shop_id: shopId
         });
 
-        return res.status(201).json(category);
+        return res.status(201).json({
+            success: 1,
+            error: null,
+            data: category
+        });
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            success: 0,
+            error: error.message
+        });
     }
 }
 
@@ -88,15 +130,24 @@ exports.updateCategory = async (req, res) => {
     const { name, description, parentCategoryId } = req.body;
 
     if (req.shop.id != shopId) {
-        return res.status(403).send(global.HTTP_CODE.FORBIDDEN + ': You are not allowed to update category for this shop');
+        return res.status(403).json({
+            success: 0,
+            error: global.HTTP_CODE.FORBIDDEN + ': You are not allowed to update category for this shop'
+        })
     }
 
     if (shopId == 'undefined' || shopId == null || shopId == '') {
-        return res.status(400).send(global.HTTP_CODE.BAD_REQUEST + ': Shop ID is required');
+        return res.status(400).json({
+            success: 0,
+            error: global.HTTP_CODE.BAD_REQUEST + ': Shop ID is required'
+        })
     }
 
     if (categoryId == 'undefined' || categoryId == null || categoryId == '') {
-        return res.status(400).send(global.HTTP_CODE.BAD_REQUEST + ': Category ID is required');
+        return res.status(400).json({
+            success: 0,
+            error: global.HTTP_CODE.BAD_REQUEST + ': Category ID is required'
+        })
     }
 
     try {
@@ -113,10 +164,18 @@ exports.updateCategory = async (req, res) => {
                 }
             });
 
-        return res.status(200).json(category);
+        return res.status(200).json({
+            success: 1,
+            error: null,
+            data: category
+        
+        });
     }
     catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            success: 0,
+            error: error.message
+        });
     }
 }
 
@@ -125,15 +184,25 @@ exports.deleteCategory = async (req, res) => {
     const categoryId = req.params.id;
 
     if (req.shop.id != shopId) {
-        return res.status(403).send(global.HTTP_CODE.FORBIDDEN + ': You are not allowed to delete category for this shop');
+        return res.status(403).json({
+            success: 0,
+            error: global.HTTP_CODE.FORBIDDEN + ': You are not allowed to delete category for this shop'
+        })
     }
 
     if (shopId == 'undefined' || shopId == null || shopId == '') {
-        return res.status(400).send(global.HTTP_CODE.BAD_REQUEST + ': Shop ID is required');
+        return res.status(400).json({
+            success: 0,
+            error: global.HTTP_CODE.BAD_REQUEST + ': Shop ID is required'
+        
+        })
     }
 
     if (categoryId == 'undefined' || categoryId == null || categoryId == '') {
-        return res.status(400).send(global.HTTP_CODE.BAD_REQUEST + ': Category ID is required');
+        return res.status(400).json({
+            success: 0,
+            error: global.HTTP_CODE.BAD_REQUEST + ': Category ID is required'
+        })
     }
 
     try {
@@ -148,9 +217,16 @@ exports.deleteCategory = async (req, res) => {
                 }
             });
 
-        return res.status(200).json(category);
+        return res.status(200).json({
+            success: 1,
+            error: null,
+            data: 'Category deleted successfully'
+        });
     }
     catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({
+            success: 0,
+            error: error.message
+        });
     }
 }
