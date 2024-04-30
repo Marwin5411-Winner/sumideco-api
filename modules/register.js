@@ -13,7 +13,10 @@ exports.createShop = async (req, res) => {
   console.log("req.body", req.body);
 
   if (!name || !email || !password || !shop_title || !shop_description) {
-    return res.status(400).send("All fields are required");
+    return res.status(400).json({
+      success: 0,
+      error: global.HTTP_CODE.BAD_REQUEST + ": All fields are required to register a user",
+    });
   }
 
   try {
@@ -36,7 +39,10 @@ exports.createShop = async (req, res) => {
     if (paxy_shop) {
       return res
         .status(400)
-        .send(global.HTTP_CODE.BAD_REQUEST + ": Shop already exists");
+        .json({ 
+          success: 0,
+          error: global.HTTP_CODE.BAD_REQUEST + ": Email already exists" 
+        });
     }
     // console.log("createdUser", createdUser);
 
@@ -49,11 +55,18 @@ exports.createShop = async (req, res) => {
         shop_description,
       })
       .then((e) => {
-        res.status(201).send(e);
+        return res.status(201).json({
+          success: 1,
+          error: null,
+          data: e,
+        });
       });
   } catch (error) {
     console.error(error);
-    res.status(500).send(error);
+    return res.status(500).json({
+      success: 0,
+      error: error.message,
+    });
   }
 };
 
