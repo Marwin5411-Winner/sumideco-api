@@ -63,8 +63,9 @@ exports.loginShop = async (req, res) => {
       success: 1,
       error: null,
       data: {
+        shop: paxy_shop,
         token,
-        shop,
+        user: shop,
       },
     });
   } catch (error) {
