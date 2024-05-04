@@ -52,8 +52,9 @@ exports.validateJWT = async (req, res, next) => {
 
       req.user = user;
     } else if (decoded.role === "Shop") {
+      console.log(decoded);
       const shop = await sequelize.shops.findOne({
-        where: { id: decoded.shop_id, ssoId: decoded.ssoid },
+        where: { id: decoded.id, ssoId: decoded.ssoid },
       });
 
       req.shop = shop;

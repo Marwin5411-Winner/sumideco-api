@@ -4,8 +4,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const moment = require("moment");
 
-const exp = moment().add(1, "day").unix();
-
 //POST LOGIN SHOP PANEL
 exports.loginShop = async (req, res) => {
   const { email, password } = req.body;
@@ -49,14 +47,16 @@ exports.loginShop = async (req, res) => {
         ssoid: shop._id.toString(),
         email: shop.email,
         role: "Shop",
-        exp,
       },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
     );
 
     await mongoose.ShopCustomers.updateOne(
       { email: email },
-      { panelAccessToken: { accessToken: token, expiresIn: exp } }
+      { panelAccessToken: { accessToken: token, expiresIn: moment().add('d', 1) } }
     );
 
     return res.status(200).send({
@@ -111,10 +111,12 @@ exports.loginCustomer = async (req, res) => {
         id: user.id,
         email: user.email,
         shop_id: user.shop_id,
-        exp,
         role: "Customer",
       },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
     );
 
     user.password = undefined;
