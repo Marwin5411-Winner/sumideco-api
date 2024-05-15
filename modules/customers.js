@@ -273,7 +273,7 @@ exports.addItemstoCartByCustomerId = async (req, res) => {
       },
     });
 
-    var cart = customer.cart;
+    
 
     if (!customer || !customer.cart) {
       return res.status(404).json({
@@ -281,6 +281,8 @@ exports.addItemstoCartByCustomerId = async (req, res) => {
         error: "Customer Not Found or Missing Cart",
       });
     }
+
+    var cart = customer.cart;
 
     //Before Add Cart Total
 

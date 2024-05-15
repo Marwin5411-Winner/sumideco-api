@@ -4,9 +4,9 @@ const { checkProductByIdwithShopId, checkProductQuantity, getProductById } = req
 
 
 exports.getOrdersByShopId = async (req, res) => {
-    const shopId = req.params.shopid;
+    const { shopid } = req.params;
 
-    if (req.shop?.id != shopId) {
+    if (req.shop?.id != shopid) {
         return res.status(403).json({
             sucess: 0,
             error: global.HTTP_CODE.FORBIDDEN + ": You are not allowed to view orders for this shop",
@@ -18,11 +18,18 @@ exports.getOrdersByShopId = async (req, res) => {
         const status = req.query.status ? req.query.status : null;
         const orders = await sequelize.orders.findAll({
             where: {
-                shop_id: shopId,
-                status: status,
+                shop_id: shopid,
                 deleted: 0,
             },
         });
+
+        if (!orders) {
+            return res.status(404).json({
+                success: 0,
+                error: global.HTTP_CODE.NOT_FOUND + ": No Orders in Your Shop",
+            });
+        }
+
         return res.status(200).json({
             success: 1,
             error: null,
@@ -80,39 +87,57 @@ exports.getOrderById = async (req, res) => {
 }
 
 exports.createOrder = async (req, res) => {
-    try {
-        const shopId = req.params.shopid;
-        const { customer_id, item_list, subtotal, total, address, status, discount } = req.body;
+    const { shopid } = req.params;
+    const { customer_id, address, status, discount } = req.body;
+    
+    // Optional: Access products and payment data from nested structure (if applicable)
+    
 
-        // Check if product is available
-        for (let i = 0; i < item_list.length; i++) {
-            const { product_id, quantity } = item_list[i];
-            const product = await checkProductByIdwithShopId(shopId, product_id);
-            const productQuantity = await checkProductQuantity(product_id, quantity, shopId);
-            if (!product) {
-                return res.status(404).json({
-                    success: 0,
-                    error: global.HTTP_CODE.NOT_FOUND + ": Product not found \n Product ID : " + product_id,
-                });
-            }
-            if (!productQuantity) {
-                return res.status(400).json({
-                    success: 0,
-                    error: global.HTTP_CODE.BAD_REQUEST + ": Product quantity not available \n Product ID : " + product_id,
-                });
-            }
+    const customer = await sequelize.customers.findOne({
+        where : {
+            id: customer_id
         }
+    })
 
+    if (!customer) {
+        return res.status(404).json({
+            success: 0,
+            error: "Customer Not Found or Missing Cart",
+          });
+    }
+
+    const { products, payment } = customer.cart // Access from "data" if present, otherwise from top-level
+
+    
+    try {
+      // Check if product is available
+      for (const product of products) {
+        const { id, amount } = product; // Assuming "amount" instead of "quantity"
+        const productExist = await checkProductByIdwithShopId(shopid, id);
+        const productQuantity = await checkProductQuantity(id, amount, shopid);
+        if (!productExist) {
+          return res.status(404).json({
+            success: 0,
+            error: global.HTTP_CODE.NOT_FOUND + ": Product not found \n Product ID : " + id,
+          });
+        }
+        if (!productQuantity) {
+          return res.status(400).json({
+            success: 0,
+            error: global.HTTP_CODE.BAD_REQUEST + ": Product quantity not available \n Product ID : " + id,
+          });
+        }
+      }
         // Create Order
         const order = await sequelize.orders.create({
             customer_id,
-            item_list,
-            subtotal,
+            item_list: products,
+            subtotal: payment.total,
             address,
             status,
-            order_date: moment().format("YYYY-MM-DD HH:mm:ss"),
-            total,
-            shop_id: shopId,
+            order_date: moment().utc().format("YYYY-MM-DD HH:mm:ss"),
+            total: payment.total + payment.tax,
+            shop_id: shopid,
         });
 
         return res.status(201).json({

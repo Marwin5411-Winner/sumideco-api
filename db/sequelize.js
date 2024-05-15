@@ -138,7 +138,7 @@ const products = sequelize.define(
       allowNull: false,
     },
     category_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: true,
     },
     thumbnail: {
@@ -190,7 +190,7 @@ const orders = sequelize.define(
       defaultValue: Sequelize.UUIDV4,
     },
     customer_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     item_list: {
@@ -207,7 +207,7 @@ const orders = sequelize.define(
       allowNull: true,
     },
     coupon_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: true,
     },
     shop_id: {
@@ -261,7 +261,7 @@ const categories = sequelize.define(
       allowNull: true,
     },
     parentCategoryId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: true,
     },
     shop_id: {
@@ -313,9 +313,9 @@ testConnection();
 
 sequelize.sync()
 
-function setupDatabase() {
-  sequelize.sync({ force: true })
-}
+
+
+
 
 module.exports = {
   shops,
