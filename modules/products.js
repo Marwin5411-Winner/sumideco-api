@@ -101,7 +101,7 @@ exports.createProduct = async (req, res) => {
 
   try {
     const shopId = req.params.shopid;
-    const { name, description, price, quantity, weight, size } = req.body;
+    const { name, description, price, quantity, weight, size, includedTax } = req.body;
     let thumbnail;
     let images = [];
 
@@ -129,6 +129,7 @@ exports.createProduct = async (req, res) => {
       quantity,
       weight,
       shop_id: shopId,
+      includedTax,
     });
 
     return res.status(200).json({

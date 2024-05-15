@@ -142,11 +142,39 @@ router.post('/login/:shopid', verifyShop, (req, res) => {
  * 500:
  * description: Internal Server Error
  */
-router.delete('/customers/:shopid/:id', verifyShop, (req, res) => {
+router.delete('/:shopid/:id', verifyShop, (req, res) => {
     // #swagger.tags = ['Customers']
     // #swagger.description = 'Delete customer by id with shopid'
     customers.deleteCustomer(req, res);
 });
+
+
+
+
+//------------------------------- CART IN CUSTOMER ----------------------------------//
+router.get('/:shopid/:id/carts', (req, res) => {
+    // #swagger.tags = ['Carts']
+    // #swagger.description = 'get Customer Carts'
+    customers.getCartByCustomerId(req, res);
+});
+
+router.post('/:shopid/:id/carts', (req, res) => {
+    // #swagger.tags = ['Carts']
+    // #swagger.description = 'Add Item or Multiple Items to Cart'
+    customers.addItemstoCartByCustomerId(req, res);
+})
+
+router.put('/:shopid/:id/carts', (req, res) => {
+    // #swagger.tags = ['Carts']
+    // #swagger.description = 'Update Customer Carts'
+    customers.updateCartByCustomerId(req, res);
+})
+
+router.delete('/:shopid/:id/carts', (req, res) => {
+    // #swagger.tags = ['Carts']
+    // #swagger.description = 'Delete or Clear Customer Carts'
+    customers.clearCartByCustomerId(req, res);
+})
 
 
 

@@ -82,6 +82,18 @@ const customers = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    cart: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue : {
+        products: [],
+        payment: {
+          total: 0.00,
+          tax: 0.00,
+          currency : null
+        }
+      }
+    },
     shop_id: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -150,6 +162,10 @@ const products = sequelize.define(
     shop_id: {
       type: DataTypes.UUID,
       allowNull: false,
+    },
+    includedTax: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false
     },
     deleted: {
       type: DataTypes.INTEGER,
@@ -226,36 +242,6 @@ const orders = sequelize.define(
   }
 );
 
-const carts = sequelize.define(
-  "carts",
-  {
-    id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      primaryKey: true,
-      unique: true,
-      defaultValue: Sequelize.UUIDV4,
-    },
-    customer_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true,
-    },
-    item_list: {
-      // [{product_id, quantity}]
-      type: DataTypes.JSON,
-      allowNull: false,
-    },
-    shop_id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-  },
-  {
-    tableName: "carts",
-  }
-);
-
 const categories = sequelize.define(
   "categories",
   {
@@ -325,13 +311,17 @@ products.belongsToMany(categories, { through: "Product_Category" });
 // Test connection
 testConnection();
 
-sequelize.sync();
+sequelize.sync()
+
+function setupDatabase() {
+  sequelize.sync({ force: true })
+}
+
 module.exports = {
   shops,
   customers,
   products,
   orders,
-  carts,
   categories,
   product_category,
 };
