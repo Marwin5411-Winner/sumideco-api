@@ -14,8 +14,6 @@ exports.getOrdersByShopId = async (req, res) => {
     }
 
     try {
-        
-        const status = req.query.status ? req.query.status : null;
         const orders = await sequelize.orders.findAll({
             where: {
                 shop_id: shopid,
