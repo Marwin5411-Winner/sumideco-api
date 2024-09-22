@@ -26,9 +26,8 @@ global.HTTP_CODE = require("./HTTP_CODE");
 
 const allowedOrigins = [
   "http://localhost:3000",
+  "http://localhost:4000",
   "http://localhost:3001",
-  "https://dev.hewkhao.com",
-  "https://hewkhao.com",
 ];
 
 const isAllowedSubdomain = (origin) => {
