@@ -31,22 +31,34 @@ const allowedOrigins = [
   "https://hewkhao.com",
 ];
 
-// Helper function to check if the origin is from a subdomain of sumideco.com
 const isAllowedSubdomain = (origin) => {
-  const sumidecoPattern = /\.sumideco\.com$/;
-  return sumidecoPattern.test(origin);
-};
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin) || isAllowedSubdomain(origin)) {
-      callback(null, true); // Allow the origin
-    } else {
-      callback(new Error("Not allowed by CORS")); // Block the origin
+    if (!origin) return false; // Handle cases where origin is undefined
+    try {
+      const url = new URL(origin);
+      const hostname = url.hostname;
+      return (
+        hostname === 'sumideco.com' || hostname.endsWith('.sumideco.com')
+      );
+    } catch (err) {
+      // If the origin is not a valid URL, block it
+      return false;
     }
-  },
-  optionsSuccessStatus: 200, // Some legacy browsers (IE11, SmartTVs) choke on 204
-};
+  };
+  
+  const corsOptions = {
+    origin: (origin, callback) => {
+      if (
+        allowedOrigins.includes(origin) ||
+        isAllowedSubdomain(origin)
+      ) {
+        callback(null, true); // Allow the origin
+      } else {
+        callback(new Error('Not allowed by CORS')); // Block the origin
+      }
+    },
+    optionsSuccessStatus: 200,
+  };
+  
 
 //Custom Middleware
 const { validateJWT } = require("./middleware/validateJWT");
