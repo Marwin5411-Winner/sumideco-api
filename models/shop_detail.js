@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       paymentFeePercentage: {
         type: DataTypes.FLOAT,
         allowNull: false,
-        defaultValue: 20.0,
+        defaultValue: 10.0,
       },
       balance: {
         type: DataTypes.FLOAT,
