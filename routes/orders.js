@@ -19,7 +19,7 @@ router.get('/:shopid/:id', verifyShop, function(req, res, next) {
 });
 
 /* POST create a new Order */
-router.post('/:shopid', verifyShop, function(req, res, next) {
+router.post('/:shopid', function(req, res, next) {
     // #swagger.tags = ['Orders']
     // #swagger.description = 'Create a new order'
     orders.createOrder(req, res);

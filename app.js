@@ -13,6 +13,7 @@ const productCategoriesRouter = require('./routes/productCategories');
 const loginRouter = require('./routes/login');
 const registerRouter = require('./routes/register');
 const systemsRouter = require('./routes/systems');
+const checkoutRouter = require('./routes/checkout');
 
 
 
@@ -27,7 +28,7 @@ require('./db/mongoose');
 global.HTTP_CODE = require('./HTTP_CODE');
 
 var corsOptions = {
-    origin: ['http://localhost:3000', 'https://dev.hewkhao.com', 'https://hewkhao.com'],
+    origin: ['http://localhost:3000', 'http://localhost:3001',  'https://dev.hewkhao.com', 'https://hewkhao.com'],
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
@@ -53,5 +54,6 @@ app.use('/register', registerRouter);
 app.use('/productCategories', validateJWT, productCategoriesRouter);
 app.use('/systems', systemsRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/checkout', checkoutRouter);
 
 module.exports = app;

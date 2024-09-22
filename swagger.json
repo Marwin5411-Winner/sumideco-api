@@ -84,12 +84,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
           "401": {
             "description": "Unauthorized"
           },
@@ -446,6 +440,52 @@
           }
         }
       },
+      "post": {
+        "tags": [
+          "Carts"
+        ],
+        "description": "Add Item or Multiple Items to Cart",
+        "parameters": [
+          {
+            "name": "shopid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "products": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
       "put": {
         "tags": [
           "Carts"
@@ -512,6 +552,9 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -544,6 +587,11 @@
           },
           {
             "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "subdomain",
             "in": "query",
             "type": "string"
           }
@@ -596,10 +644,19 @@
                 "quantity": {
                   "example": "any"
                 },
+                "content": {
+                  "example": "any"
+                },
                 "weight": {
                   "example": "any"
                 },
                 "size": {
+                  "example": "any"
+                },
+                "includedTax": {
+                  "example": "any"
+                },
+                "productType": {
                   "example": "any"
                 }
               }
@@ -628,7 +685,7 @@
         }
       }
     },
-    "/products/{shopid}/{id}": {
+    "/products/{shopid}/": {
       "get": {
         "tags": [
           "Products"
@@ -640,18 +697,9 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "400": {
             "description": "Bad Request"
           },
@@ -665,7 +713,9 @@
             "description": "Internal Server Error"
           }
         }
-      },
+      }
+    },
+    "/products/{shopid}/{id}": {
       "put": {
         "tags": [
           "Products"
@@ -703,6 +753,18 @@
                   "example": "any"
                 },
                 "weight": {
+                  "example": "any"
+                },
+                "content": {
+                  "example": "any"
+                },
+                "size": {
+                  "example": "any"
+                },
+                "includedTax": {
+                  "example": "any"
+                },
+                "productType": {
                   "example": "any"
                 }
               }
@@ -819,11 +881,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "type": "string"
           }
         ],
         "responses": {
@@ -866,15 +923,6 @@
               "type": "object",
               "properties": {
                 "customer_id": {
-                  "example": "any"
-                },
-                "item_list": {
-                  "example": "any"
-                },
-                "subtotal": {
-                  "example": "any"
-                },
-                "total": {
                   "example": "any"
                 },
                 "address": {
@@ -1187,7 +1235,7 @@
     "/register/shop": {
       "post": {
         "tags": [
-          "Customers"
+          "Shops"
         ],
         "description": "Create shop",
         "parameters": [
@@ -1197,7 +1245,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
+                "username": {
                   "example": "any"
                 },
                 "email": {

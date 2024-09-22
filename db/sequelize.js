@@ -151,7 +151,7 @@ const products = sequelize.define(
     },
     weight: {
       // in grams
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
     size: {
@@ -290,11 +290,11 @@ const product_category = sequelize.define(
       defaultValue: Sequelize.UUIDV4,
     },
     product_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     category_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
   },
@@ -303,10 +303,65 @@ const product_category = sequelize.define(
   }
 );
 
+const shops_secrets = sequelize.define(
+  "shop_secrets",
+  {
+    shop_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      primaryKey: true,
+      unique: true,
+    },
+    stripe_secret : {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    stripe_public: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  }
+)
+
+const shops_details = sequelize.define(
+    "shops_details",
+  {
+    shop_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      primaryKey: true,
+      unique: true
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    headline: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    logo_url: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    payment_details: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: {
+        bank: [],
+        promtpay: []
+      }
+    },
+  })
+
+
+
 //Define relationships
 /// Many to Many Categories - Products
 categories.belongsToMany(products, { through: "Product_Category" });
 products.belongsToMany(categories, { through: "Product_Category" });
+
+
 
 // Test connection
 testConnection();
@@ -324,4 +379,6 @@ module.exports = {
   orders,
   categories,
   product_category,
+  shops_secrets,
+  shops_details
 };

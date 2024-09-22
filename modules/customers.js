@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const sequelize = require("../db/sequelize");
+const db = require("../models");
 const config = require("../config");
 const { where } = require("sequelize");
 
@@ -24,7 +24,7 @@ exports.getCustomersByShopId = async (req, res) => {
   }
 
   try {
-    const users = await sequelize.customers.findAll({
+    const users = await db.Customer.findAll({
       attributes: { exclude: ["password"] },
       where: { shop_id: shopid, deleted: 0 },
       limit: req.query.limit ? parseInt(req.query.limit) : config.Query.limit,
@@ -66,7 +66,7 @@ exports.getCustomerById = async (req, res) => {
   }
 
   try {
-    const user = await sequelize.customers.findOne({
+    const user = await db.Customer.findOne({
       attributes: { exclude: ["password"] },
       where: { id, shop_id: shopid, deleted: 0 },
     });
@@ -113,7 +113,7 @@ exports.updateCustomer = async (req, res) => {
   }
 
   try {
-    const user = await sequelize.customers.findOne({
+    const user = await db.Customer.findOne({
       where: { id, shop_id: shopid, deleted: 0 },
     });
     if (!user) {
@@ -168,7 +168,7 @@ exports.deleteCustomer = async (req, res) => {
   }
 
   try {
-    const user = await sequelize.customers.update(
+    const user = await db.Customer.update(
       {
         deleted: 1,
       },
@@ -210,7 +210,7 @@ exports.getCartByCustomerId = async (req, res) => {
   }
 
   try {
-    const customer = await sequelize.customers.findOne({
+    const customer = await db.Customer.findOne({
       where: {
         id,
       },
@@ -267,7 +267,7 @@ exports.addItemstoCartByCustomerId = async (req, res) => {
   }
 
   try {
-    let customer = await sequelize.customers.findOne({
+    let customer = await db.Customer.findOne({
       where: {
         id,
       },
@@ -304,7 +304,7 @@ exports.addItemstoCartByCustomerId = async (req, res) => {
           cart.products[existingProductIndex].price;
       } else {
         // No duplicate found, add product to cart normally
-        const productData = await sequelize.products.findOne({
+        const productData = await db.products.findOne({
           where: {
             id: product.product_id,
           },
@@ -329,7 +329,7 @@ exports.addItemstoCartByCustomerId = async (req, res) => {
       0
     );
 
-    const updateCustomer = await sequelize.customers.update(
+    const updateCustomer = await db.Customer.update(
       {
         cart,
       },
@@ -368,7 +368,7 @@ exports.updateCartByCustomerId = async (req, res) => {
   }
 
   try {
-    const customer = await sequelize.customers.findOne({
+    const customer = await db.Customer.findOne({
       where: {
         id,
       },
@@ -381,7 +381,7 @@ exports.updateCartByCustomerId = async (req, res) => {
       });
     }
 
-    const updatedCart = await sequelize.customers.update(
+    const updatedCart = await db.Customer.update(
       {
         cart,
       },
@@ -417,7 +417,7 @@ exports.clearCartByCustomerId = async (req, res) => {
   }
 
   try {
-    const customer = await sequelize.customers.findOne({
+    const customer = await db.Customer.findOne({
       where: {
         id,
       },
@@ -430,7 +430,7 @@ exports.clearCartByCustomerId = async (req, res) => {
       });
     }
 
-    const clearedCart = await sequelize.customers.update(
+    const clearedCart = await db.Customer.update(
       {
         cart: {
           products: [],

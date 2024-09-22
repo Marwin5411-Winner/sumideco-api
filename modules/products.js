@@ -1,20 +1,19 @@
-const sequelize = require("../db/sequelize");
+const db = require("../models");
 const config = require("../config");
+const productFunction = require("../functions/products");
 
 exports.getProductsByShopId = async (req, res) => {
   const shopId = req.params.shopid;
 
-  if (shopId == "undefined" || shopId == null || shopId == "") {
-    return res
-      .status(400)
-      .json({
-        success: 0,
-        error: global.HTTP_CODE.BAD_REQUEST + ": Shop ID is required",
-      })
+  if (!shopId) {
+    return res.status(400).json({
+      success: 0,
+      error: "400: Shop ID is required",
+    });
   }
 
   try {
-    const products = await sequelize.products.findAll({
+    const products = await db.Product.findAll({
       where: {
         shop_id: shopId,
         deleted: 0,
@@ -26,26 +25,22 @@ exports.getProductsByShopId = async (req, res) => {
     });
 
     if (!products) {
-      return res
-        .status(404)
-        .json({
-            success: 0,
-            error: global.HTTP_CODE.NOT_FOUND + ": Products not found",
-        })
+      return res.status(404).json({
+        success: 0,
+        error: "404: Products not found",
+      });
     }
 
     return res.status(200).json({
-        success: 1,
-        error: null,
-        data: products,
+      success: 1,
+      error: null,
+      data: products,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        success: 0,
-        error: error.message,
-      })
+    return res.status(500).json({
+      success: 0,
+      error: error.message,
+    });
   }
 };
 
@@ -54,7 +49,7 @@ exports.getProductById = async (req, res) => {
   const productId = req.params.id;
 
   try {
-    const product = await sequelize.products.findOne({
+    const product = await db.Product.findOne({
       where: {
         id: productId,
         shop_id: shopId,
@@ -63,21 +58,18 @@ exports.getProductById = async (req, res) => {
     });
 
     if (!product) {
-      return res
-        .status(404)
-        .send(global.HTTP_CODE.NOT_FOUND + ": Product not found");
+      return res.status(404).send("404: Product not found");
     }
 
     return res.status(200).json({
-        success: 1,
-        error: null,
-        data: product,
-        
+      success: 1,
+      error: null,
+      data: product,
     });
   } catch (error) {
     return res.status(500).json({
-        success: 0,
-        error: error.message,
+      success: 0,
+      error: error.message,
     });
   }
 };
@@ -85,64 +77,77 @@ exports.getProductById = async (req, res) => {
 exports.createProduct = async (req, res) => {
   if (!req.body) {
     return res.status(400).json({
-        success: 0,
-        error: "Product data is required!",
+      success: 0,
+      error: "Product data is required!",
     });
   }
+  console.log(req.body);
 
-  if (req.shop?.id != req.params.shopid) {
-    return res
-      .status(403)
-      .json({
-        success: 0,
-        error: global.HTTP_CODE.FORBIDDEN + ": You are not authorized to create product for this shop",
-      });
+  if (req.shop?.id !== req.params.shopid) {
+    return res.status(403).json({
+      success: 0,
+      error: "403: You are not authorized to create a product for this shop",
+    });
   }
 
   try {
     const shopId = req.params.shopid;
-    const { name, description, price, quantity, weight, size, includedTax } = req.body;
+    const {
+      name,
+      description,
+      price,
+      quantity,
+      content,
+      weight,
+      size,
+      includedTax,
+      productType,
+    } = req.body;
+
     let thumbnail;
     let images = [];
 
-    if (req.files?.length == 0) {
+    if (!req.files || req.files.length === 0) {
       return res.status(400).json({
         success: 0,
-        error: "Product thumbnail and images are required!",
+        error: "Product thumbnail or images are required!",
       });
-    } else if (req.files.length >= 1) {
+    } else {
       req.files.forEach((file) => {
         if (file.fieldname === "thumbnail") {
-          thumbnail = file?.publicUrl;
+          thumbnail = file.publicUrl;
         } else if (file.fieldname === "images") {
-          images.push(file?.publicUrl);
+          images.push(file.publicUrl);
         }
       });
     }
 
-    const product = await sequelize.products.create({
+    const product = await db.Product.create({
       name,
       description,
       price,
       thumbnail,
       images,
+      content,
       quantity,
       weight,
-      shop_id: shopId,
+      size,
       includedTax,
+      productType,
+      shop_id: shopId,
     });
 
+    await productFunction.increasementProductsTotalToShopDetails(shopId);
+
     return res.status(200).json({
-        success: 1,
-        error: null,
-        data: product,
-    
+      success: 1,
+      error: null,
+      data: product,
     });
   } catch (error) {
     return res.status(500).json({
-        success: 0,
-        error: error.message,
-    
+      success: 0,
+      error: error.message,
     });
   }
 };
@@ -152,32 +157,41 @@ exports.updateProduct = async (req, res) => {
     const shopId = req.params.shopid;
 
     if (req.shop?.id !== shopId) {
-      return res
-        .status(403)
-        .json({
-            success: 0,
-            error: global.HTTP_CODE.FORBIDDEN + ": You are not authorized to update product for this shop",
-            });
+      return res.status(403).json({
+        success: 0,
+        error: "403: You are not authorized to update a product for this shop",
+      });
     }
 
     const productId = req.params.id;
-    const { name, description, price, quantity, weight } = req.body;
+    const {
+      name,
+      description,
+      price,
+      quantity,
+      weight,
+      content,
+      size,
+      status,
+      includedTax,
+      productType,
+    } = req.body;
 
     let thumbnail;
     let images = [];
 
-    if (req.files?.length >= 1) {
-      req.files?.forEach((file) => {
+    if (req.files && req.files.length > 0) {
+      req.files.forEach((file) => {
         if (file.fieldname === "thumbnail") {
-          thumbnail = file?.publicUrl;
+          thumbnail = file.publicUrl;
         } else if (file.fieldname === "images") {
-          images.push(file?.publicUrl);
+          images.push(file.publicUrl);
         }
       });
     }
 
-    //Check if product exists
-    const existsPr = await sequelize.products.findOne({
+    // Check if product exists
+    const existsPr = await db.Product.findOne({
       where: {
         id: productId,
         shop_id: shopId,
@@ -188,11 +202,11 @@ exports.updateProduct = async (req, res) => {
     if (!existsPr) {
       return res.status(404).json({
         success: 0,
-        error: global.HTTP_CODE.NOT_FOUND + ": Product not found",
+        error: "404: Product not found",
       });
     }
 
-    const product = await sequelize.products.update(
+    const product = await db.Product.update(
       {
         name,
         description,
@@ -200,7 +214,12 @@ exports.updateProduct = async (req, res) => {
         thumbnail,
         images,
         quantity,
+        status,
         weight,
+        content,
+        size,
+        includedTax,
+        productType,
       },
       {
         where: {
@@ -212,15 +231,14 @@ exports.updateProduct = async (req, res) => {
     );
 
     return res.status(200).json({
-        success: 1,
-        error: null,
-        data: product,
+      success: 1,
+      error: null,
+      data: product,
     });
   } catch (error) {
-    console.log("error", error);
     return res.status(500).json({
-        success: 0,
-        error: error.message,
+      success: 0,
+      error: error.message,
     });
   }
 };
@@ -231,50 +249,38 @@ exports.deleteProduct = async (req, res) => {
     const productId = req.params.id;
 
     if (req.shop?.id !== shopId) {
-      return res
-        .status(403)
-        .json({
-            success: 0,
-            error: global.HTTP_CODE.FORBIDDEN + ": You are not authorized to delete product for this shop",
-        });
+      return res.status(403).json({
+        success: 0,
+        error: "403: You are not authorized to delete a product for this shop",
+      });
     }
 
-    const product = await sequelize.products.update(
-      {
-        deleted: 1,
+    const product = await db.Product.destroy({
+      where: {
+        id: productId,
+        shop_id: shopId,
+        deleted: 0,
       },
-      {
-        where: {
-          id: productId,
-          shop_id: shopId,
-          deleted: 0,
-        },
-      }
-    );
+    });
 
     if (!product) {
-      return res
-        .status(404)
-        .json({
-            success: 0,
-            error: global.HTTP_CODE.NOT_FOUND + ": Product not found",
-        });
+      return res.status(404).json({
+        success: 0,
+        error: "404: Product not found",
+      });
     }
 
-    return res
-      .status(201)
-      .json({
-            success: 1,
-            error: null,
-            data: "Product deleted successfully",
-        });
+    await productFunction.decreasementProductsTotalToShopDetails(shopId);
 
+    return res.status(201).json({
+      success: 1,
+      error: null,
+      data: "Product deleted successfully",
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-            success: 0,
-            error: error.message,
-        });
+    return res.status(500).json({
+      success: 0,
+      error: error.message,
+    });
   }
 };

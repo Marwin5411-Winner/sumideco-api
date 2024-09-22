@@ -45,7 +45,7 @@ router.post('/customer/:shopid', (req, res) => {
 });
 
 router.post('/shop', (req, res) => {
-    // #swagger.tags = ['Customers']
+    // #swagger.tags = ['Shops']
     // #swagger.description = 'Create shop'
     createShop(req, res);
 });

@@ -1,4 +1,4 @@
-const sequelize = require("../db/sequelize");
+const db = require("../models");
 
 exports.verifyShop = async (req, res, next) => {
     const { shopid } = req.params;
@@ -7,7 +7,7 @@ exports.verifyShop = async (req, res, next) => {
     }
 
     try {
-        const shop = await sequelize.shops.findOne({ where: { id: shopid, status: 'active' } });
+        const shop = await db.Shop.findOne({ where: { id: shopid, status: 'active' } });
         if (!shop) {
             return res.status(404).send("Shop not found or Shop is not active or suspended");
         }

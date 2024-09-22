@@ -1,4 +1,4 @@
-const sequelize = require("../db/sequelize");
+const db = require("../models");
 const mongoose = require("../db/mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -19,8 +19,8 @@ exports.loginShop = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("hashedPassword", hashedPassword);
+    // const hashedPassword = await bcrypt.hash(password, 10);
+    // console.log("hashedPassword", hashedPassword);
 
     const isMatch = await bcrypt.compare(password, shop.password);
     if (!isMatch) {
@@ -30,8 +30,9 @@ exports.loginShop = async (req, res) => {
       });
     }
 
-    const paxy_shop = await sequelize.shops.findOne({
+    const paxy_shop = await db.Shop.findOne({
       where: { ssoId: shop._id.toString() },
+      include: [db.ShopDetail]
     });
 
     if (!paxy_shop) {
@@ -56,7 +57,7 @@ exports.loginShop = async (req, res) => {
 
     await mongoose.ShopCustomers.updateOne(
       { email: email },
-      { panelAccessToken: { accessToken: token, expiresIn: moment().add('d', 1) } }
+      { panelAccessToken: { accessToken: token, expiresIn: moment().add(1, 'd') } }
     );
 
     return res.status(200).send({
@@ -88,7 +89,7 @@ exports.loginCustomer = async (req, res) => {
   }
 
   try {
-    let user = await sequelize.customers.findOne({
+    let user = await db.Customer.findOne({
       where: { email, deleted: 0 },
     });
     if (!user) {
