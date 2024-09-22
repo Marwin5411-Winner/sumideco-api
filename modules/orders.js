@@ -1,12 +1,13 @@
-const sequelize = require("../db/sequelize");
+const db = require("../models");
 const moment = require("moment");
 const { checkProductByIdwithShopId, checkProductQuantity, getProductById } = require("../functions/products");
+const { where } = require("sequelize");
 
 
 exports.getOrdersByShopId = async (req, res) => {
-    const shopId = req.params.shopid;
+    const { shopid } = req.params;
 
-    if (req.shop?.id != shopId) {
+    if (req.shop?.id != shopid) {
         return res.status(403).json({
             sucess: 0,
             error: global.HTTP_CODE.FORBIDDEN + ": You are not allowed to view orders for this shop",
@@ -14,15 +15,20 @@ exports.getOrdersByShopId = async (req, res) => {
     }
 
     try {
-        
-        const status = req.query.status ? req.query.status : null;
-        const orders = await sequelize.orders.findAll({
+        const orders = await db.Order.findAll({
             where: {
-                shop_id: shopId,
-                status: status,
+                shop_id: shopid,
                 deleted: 0,
             },
         });
+
+        if (!orders) {
+            return res.status(404).json({
+                success: 0,
+                error: global.HTTP_CODE.NOT_FOUND + ": No Orders in Your Shop",
+            });
+        }
+
         return res.status(200).json({
             success: 1,
             error: null,
@@ -42,7 +48,7 @@ exports.getOrderById = async (req, res) => {
         const shopId = req.params.shopid;
 
         const orderId = req.params.id;
-        let order = await sequelize.orders.findOne({
+        let order = await db.Order.findOne({
             where: {
                 id: orderId,
                 shop_id: shopId,
@@ -80,54 +86,95 @@ exports.getOrderById = async (req, res) => {
 }
 
 exports.createOrder = async (req, res) => {
-    try {
-        const shopId = req.params.shopid;
-        const { customer_id, item_list, subtotal, total, address, status, discount } = req.body;
+    const { shopid } = req.params;
+    const { customer_id, email, address, status, coupon_id, products } = req.body;
 
-        // Check if product is available
-        for (let i = 0; i < item_list.length; i++) {
-            const { product_id, quantity } = item_list[i];
-            const product = await checkProductByIdwithShopId(shopId, product_id);
-            const productQuantity = await checkProductQuantity(product_id, quantity, shopId);
-            if (!product) {
+    if (!email || !products || !Array.isArray(products) || products.length === 0) {
+        return res.status(400).json({
+            success: 0,
+            error: 'Email and products are required'
+        });
+    }
+
+    let discount = 0;
+
+    try {
+        // Validate the products and their availability
+        let subtotal = 0;
+        const validatedProducts = [];
+
+        for (const product of products) {
+            const { id, quantity } = product; 
+
+            // Fetch the product details
+            const productData = await db.Product.findOne({
+                where: {
+                    id: id,
+                    shop_id: shopid
+                }
+            });
+
+            if (!productData) {
                 return res.status(404).json({
                     success: 0,
-                    error: global.HTTP_CODE.NOT_FOUND + ": Product not found \n Product ID : " + product_id,
+                    error: `Product not found or invalid. Product ID: ${id}`
                 });
             }
-            if (!productQuantity) {
+
+            // Check if sufficient quantity is available
+            if (productData.quantity < quantity) {
                 return res.status(400).json({
                     success: 0,
-                    error: global.HTTP_CODE.BAD_REQUEST + ": Product quantity not available \n Product ID : " + product_id,
+                    error: `Insufficient quantity for product ID: ${id}`
                 });
             }
+
+            // Calculate subtotal based on product price and quantity
+            const productSubtotal = productData.price * quantity;
+            subtotal += productSubtotal;
+
+            // Append the validated product
+            validatedProducts.push({
+                product_id: productData.id,
+                quantity,
+            });
         }
 
-        // Create Order
-        const order = await sequelize.orders.create({
-            customer_id,
-            item_list,
-            subtotal,
-            address,
-            status,
-            order_date: moment().format("YYYY-MM-DD HH:mm:ss"),
-            total,
-            shop_id: shopId,
+        // Apply a 10% tax on subtotal and calculate the total
+        const tax = subtotal * 0.1;
+        const total = subtotal + tax - discount;
+
+        // Create the order
+        const order = await db.Order.create({
+            customer_id: customer_id || null,
+            email: email,
+            item_list: JSON.stringify(validatedProducts), // Store item list as JSON
+            subtotal: subtotal,
+            discount: discount,
+            coupon_id: coupon_id || null,
+            shop_id: shopid,
+            address: address || null,
+            order_date: new Date().toISOString(),
+            status: status,
+            total: total,
+            deleted: 0 // Default value for active orders
         });
 
+        // Return success response
         return res.status(201).json({
             success: 1,
             error: null,
-            data: order,
-        
+            data: order
         });
+
     } catch (error) {
+        console.error('Error creating order:', error);
         return res.status(500).json({
             success: 0,
-            error: error.message,
+            error: error.message
         });
     }
-}
+};
 
 exports.updateOrder = async (req, res) => {
     try {
@@ -135,7 +182,7 @@ exports.updateOrder = async (req, res) => {
         const orderId = req.params.id;
         const { status, customer_id, subtotal, address, total } = req.body;
 
-        const order = await sequelize.orders.findOne({
+        const order = await db.Order.findOne({
             where: {
                 id: orderId,
                 shop_id: shopId,
@@ -178,7 +225,7 @@ exports.deleteOrder = async (req, res) => {
         const shopId = req.params.shopid;
         const orderId = req.params.id;
 
-        const order = await sequelize.orders.findOne({
+        const order = await db.Order.findOne({
             where: {
                 id: orderId,
                 shop_id: shopId,

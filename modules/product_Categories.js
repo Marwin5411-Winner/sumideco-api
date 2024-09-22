@@ -1,4 +1,4 @@
-const sequelize = require('../db/sequelize');
+const db = require("../models");
 
 exports.getCategoriesByShopId = async (req, res) => {
     const shopId = req.params.shopid;
@@ -11,7 +11,7 @@ exports.getCategoriesByShopId = async (req, res) => {
     }
 
     try {
-        const categories = await sequelize.categories.findAll({
+        const categories = await db.Category.findAll({
             where: {
                 shop_id: shopId,
                 deleted: 0
@@ -46,8 +46,8 @@ exports.getCategoryById = async (req, res) => {
     const categoryId = req.params.id;
 
     try {
-        const category = await sequelize.categories.findOne({
-            include: [sequelize.products],
+        const category = await db.Category.findOne({
+            include: [db.Product],
             where: {
                 id: categoryId,
                 shop_id: shopId,
@@ -104,7 +104,7 @@ exports.createCategory = async (req, res) => {
     }
 
     try {
-        const category = await sequelize.categories.create({
+        const category = await db.Category.create({
             name,
             description,
             parentCategoryId,
@@ -151,7 +151,7 @@ exports.updateCategory = async (req, res) => {
     }
 
     try {
-        const category = await sequelize.categories.update({
+        const category = await db.Category.update({
             name,
             description,
             parentCategoryId,
@@ -206,7 +206,7 @@ exports.deleteCategory = async (req, res) => {
     }
 
     try {
-        const category = await sequelize.categories.update({
+        const category = await db.Category.update({
             deleted: 1
         },
             {

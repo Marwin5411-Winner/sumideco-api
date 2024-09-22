@@ -1,9 +1,9 @@
-const sequelize = require("../db/sequelize");
+const db = require("../models");
 
 //Check if shop exists
 exports.checkShop = async (shopId) => {
     try {
-        const shop = await sequelize.shops.findOne({ where: { id: shopId, status: 'active' } });
+        const shop = await db.Shop.findOne({ where: { id: shopId, status: 'active' } });
         if (!shop) {
             return false;
         }

@@ -82,6 +82,18 @@ const customers = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    cart: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue : {
+        products: [],
+        payment: {
+          total: 0.00,
+          tax: 0.00,
+          currency : null
+        }
+      }
+    },
     shop_id: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -126,7 +138,7 @@ const products = sequelize.define(
       allowNull: false,
     },
     category_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: true,
     },
     thumbnail: {
@@ -139,7 +151,7 @@ const products = sequelize.define(
     },
     weight: {
       // in grams
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
     size: {
@@ -150,6 +162,10 @@ const products = sequelize.define(
     shop_id: {
       type: DataTypes.UUID,
       allowNull: false,
+    },
+    includedTax: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false
     },
     deleted: {
       type: DataTypes.INTEGER,
@@ -174,7 +190,7 @@ const orders = sequelize.define(
       defaultValue: Sequelize.UUIDV4,
     },
     customer_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     item_list: {
@@ -191,7 +207,7 @@ const orders = sequelize.define(
       allowNull: true,
     },
     coupon_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: true,
     },
     shop_id: {
@@ -226,36 +242,6 @@ const orders = sequelize.define(
   }
 );
 
-const carts = sequelize.define(
-  "carts",
-  {
-    id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      primaryKey: true,
-      unique: true,
-      defaultValue: Sequelize.UUIDV4,
-    },
-    customer_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true,
-    },
-    item_list: {
-      // [{product_id, quantity}]
-      type: DataTypes.JSON,
-      allowNull: false,
-    },
-    shop_id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-  },
-  {
-    tableName: "carts",
-  }
-);
-
 const categories = sequelize.define(
   "categories",
   {
@@ -275,7 +261,7 @@ const categories = sequelize.define(
       allowNull: true,
     },
     parentCategoryId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: true,
     },
     shop_id: {
@@ -304,11 +290,11 @@ const product_category = sequelize.define(
       defaultValue: Sequelize.UUIDV4,
     },
     product_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     category_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
   },
@@ -317,21 +303,82 @@ const product_category = sequelize.define(
   }
 );
 
+const shops_secrets = sequelize.define(
+  "shop_secrets",
+  {
+    shop_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      primaryKey: true,
+      unique: true,
+    },
+    stripe_secret : {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    stripe_public: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  }
+)
+
+const shops_details = sequelize.define(
+    "shops_details",
+  {
+    shop_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      primaryKey: true,
+      unique: true
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    headline: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    logo_url: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    payment_details: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: {
+        bank: [],
+        promtpay: []
+      }
+    },
+  })
+
+
+
 //Define relationships
 /// Many to Many Categories - Products
 categories.belongsToMany(products, { through: "Product_Category" });
 products.belongsToMany(categories, { through: "Product_Category" });
 
+
+
 // Test connection
 testConnection();
 
-sequelize.sync();
+sequelize.sync()
+
+
+
+
+
 module.exports = {
   shops,
   customers,
   products,
   orders,
-  carts,
   categories,
   product_category,
+  shops_secrets,
+  shops_details
 };

@@ -1,4 +1,4 @@
-const sequelize = require("../db/sequelize");
+const db = require("../models");
 const mongoose = require("../db/mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -9,13 +9,15 @@ const { checkShop } = require("../functions/shops");
 // POST CREATE SHOP (REGISTER)
 //PANEL
 exports.createShop = async (req, res) => {
-  const { name, email, password, shop_title, shop_description } = req.body;
+  const { username, email, password, shop_title, shop_description } = req.body;
   console.log("req.body", req.body);
 
-  if (!name || !email || !password || !shop_title || !shop_description) {
+  if (!username || !email || !password || !shop_title || !shop_description) {
     return res.status(400).json({
       success: 0,
-      error: global.HTTP_CODE.BAD_REQUEST + ": All fields are required to register a user",
+      error:
+        global.HTTP_CODE.BAD_REQUEST +
+        ": All fields are required to register a user",
     });
   }
 
@@ -28,39 +30,41 @@ exports.createShop = async (req, res) => {
 
     if (!tarvation_user) {
       tarvation_user = await mongoose.ShopCustomers.create({
-        name,
+        name: username,
         email,
         password: hashedPassword,
       });
     }
 
-    const paxy_shop = await sequelize.shops.findOne({ where: { email } });
+    const paxy_shop = await db.Shop.findOne({ where: { email } });
 
     if (paxy_shop) {
-      return res
-        .status(400)
-        .json({ 
-          success: 0,
-          error: global.HTTP_CODE.BAD_REQUEST + ": Email already exists" 
-        });
+      return res.status(400).json({
+        success: 0,
+        error: global.HTTP_CODE.BAD_REQUEST + ": Email already exists",
+      });
     }
     // console.log("createdUser", createdUser);
 
-    await sequelize.shops
-      .create({
-        ssoId: tarvation_user._id.toString(),
-        email,
-        name,
-        shop_title,
-        shop_description,
-      })
-      .then((e) => {
-        return res.status(201).json({
-          success: 1,
-          error: null,
-          data: e,
-        });
+    const shop = await db.Shop.create({
+      ssoId: tarvation_user._id.toString(),
+      email,
+      username,
+      shop_title,
+      shop_description,
+    });
+
+    const shops_details = await db.ShopDetail.create({
+      shop_id: shop.id,
+      title: shop_title,
+      headline: shop_description,
+    }).then((e) => {
+      return res.status(201).json({
+        success: 1,
+        error: null,
+        data: e,
       });
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -87,7 +91,7 @@ exports.createCustomer = async (req, res) => {
 
   try {
     //Check if email already exists
-    const user = await sequelize.customers.findOne({
+    const user = await db.Customer.findOne({
       where: { email, shop_id: shopid, deleted: 0 },
     });
 
@@ -97,7 +101,7 @@ exports.createCustomer = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const createdUser = await sequelize.customers.create({
+    const createdUser = await db.Sustmers.create({
       name,
       email,
       password: hashedPassword,
