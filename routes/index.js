@@ -8,9 +8,8 @@ const webhook = require('../modules/webhook');
 //   res.render('index', { title: 'Express' });
 // });
 
-router.get('/webhook/stripe', async (req, res, next) => {
-    webhook.StripeWebhook(req, res);
-});
+// Define your route to handle the Stripe webhook
+
 
 
 
