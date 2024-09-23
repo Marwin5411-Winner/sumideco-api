@@ -1,8 +1,8 @@
 const db = require('../models');
 const { handleCheckoutSessionCompleted } = require('../functions/webhook');
 const stripe = require('stripe')(process.env.STRIPE_SK_KEY);
-// const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-const endpointSecret = "whsec_64291fd2093cd83a576d23d22841707fbff5818aa658495cdfc99db4a619aec7";
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
 
 exports.StripeWebhook = async (req, res) => {
     const sig = req.headers['stripe-signature'];
