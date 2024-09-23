@@ -56,17 +56,21 @@ const isAllowedSubdomain = (origin) => {
   }
 };
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    console.log(origin);
+// CORS options delegate function
+const corsOptionsDelegate = function (req, callback) {
+  const origin = req.header('Origin');
+
+  if (req.path.startsWith('/webhook/')) {
+    // Bypass CORS for any requests to /webhook/*
+    callback(null, { origin: true }); // Allow all origins
+  } else {
+    // Apply your existing CORS restrictions
     if (allowedOrigins.includes(origin) || isAllowedSubdomain(origin)) {
-      callback(null, true); // Allow the origin
+      callback(null, { origin: true }); // Allow the origin
     } else {
-      callback(new Error('Not allowed by CORS')); // Block the origin
-      // callback(null, true); // Allow the origin
+      callback(new Error('Not allowed by CORS'), { origin: false }); // Block the origin
     }
-  },
-  optionsSuccessStatus: 200,
+  }
 };
 
 //Custom Middleware
@@ -74,7 +78,7 @@ const { validateJWT } = require("./middleware/validateJWT");
 
 const app = express();
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptionsDelegate));
 app.use(logger("dev"));
 // Apply express.json() globally except for the /webhook/stripe route
 app.use((req, res, next) => {
