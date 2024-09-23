@@ -4,6 +4,8 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 require("dotenv").config();
 var cors = require("cors");
+const bodyParser = require("body-parser");
+
 var indexRouter = require("./routes/index");
 var shopsRouter = require("./routes/shops");
 const customersRouter = require("./routes/customers");
@@ -28,36 +30,44 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:4000",
   "http://localhost:3001",
+  "3.18.12.63",
+  "3.130.192.231",
+  "13.235.14.237",
+  "13.235.122.149",
+  "18.211.135.69",
+  "35.154.171.200",
+  "52.15.183.38",
+  "54.88.130.119",
+  "54.88.130.237",
+  "54.187.174.169",
+  "54.187.205.235",
+  "54.187.216.72",
 ];
 
 const isAllowedSubdomain = (origin) => {
-    if (!origin) return false; // Handle cases where origin is undefined
-    try {
-      const url = new URL(origin);
-      const hostname = url.hostname;
-      return (
-        hostname === 'sumideco.com' || hostname.endsWith('.sumideco.com')
-      );
-    } catch (err) {
-      // If the origin is not a valid URL, block it
-      return false;
+  if (!origin) return false; // Handle cases where origin is undefined
+  try {
+    const url = new URL(origin);
+    const hostname = url.hostname;
+    return hostname === "sumideco.com" || hostname.endsWith(".sumideco.com");
+  } catch (err) {
+    // If the origin is not a valid URL, block it
+    return false;
+  }
+};
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    console.log(origin);
+    if (allowedOrigins.includes(origin) || isAllowedSubdomain(origin)) {
+      callback(null, true); // Allow the origin
+    } else {
+      callback(new Error('Not allowed by CORS')); // Block the origin
+      // callback(null, true); // Allow the origin
     }
-  };
-  
-  const corsOptions = {
-    origin: (origin, callback) => {
-      if (
-        allowedOrigins.includes(origin) ||
-        isAllowedSubdomain(origin)
-      ) {
-        callback(null, true); // Allow the origin
-      } else {
-        callback(new Error('Not allowed by CORS')); // Block the origin
-      }
-    },
-    optionsSuccessStatus: 200,
-  };
-  
+  },
+  optionsSuccessStatus: 200,
+};
 
 //Custom Middleware
 const { validateJWT } = require("./middleware/validateJWT");
@@ -66,7 +76,14 @@ const app = express();
 
 app.use(cors(corsOptions));
 app.use(logger("dev"));
-app.use(express.json());
+// Apply express.json() globally except for the /webhook/stripe route
+app.use((req, res, next) => {
+  if (req.originalUrl === "/webhook/stripe") {
+    next(); // Skip JSON body parsing for Stripe webhook
+  } else {
+    express.json()(req, res, next); // Apply express.json() to all other routes
+  }
+});
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
@@ -82,5 +99,19 @@ app.use("/productCategories", validateJWT, productCategoriesRouter);
 app.use("/systems", systemsRouter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/checkout", checkoutRouter);
+
+const webhook = require("./modules/webhook");
+app.post(
+  "/webhook/stripe",
+  bodyParser.raw({ type: "application/json" }),
+  async (req, res, next) => {
+    try {
+      // Call your webhook handler function
+      await webhook.StripeWebhook(req, res);
+    } catch (err) {
+      next(err); // Pass any errors to Express error handling middleware
+    }
+  }
+);
 
 module.exports = app;
