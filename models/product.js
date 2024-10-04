@@ -1,4 +1,3 @@
-const { all } = require("../app");
 
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define(
@@ -90,6 +89,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.FLOAT,
             allowNull: false,
             defaultValue: 0.00
+        },
+        recommended: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         },
         sales: {
             type: DataTypes.INTEGER,

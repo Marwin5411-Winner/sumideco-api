@@ -49,11 +49,15 @@ module.exports = (sequelize, DataTypes) => {
         status: {
           type: DataTypes.STRING,
           allowNull: false,
-          defaultValue: "รอยืนยัน",
+          defaultValue: "pending",
         },
         total: {
           type: DataTypes.FLOAT,
           allowNull: false,
+        },
+        stripe_data: {
+          type: DataTypes.JSON,
+          allowNull: true
         },
         deleted: {
           type: DataTypes.INTEGER,

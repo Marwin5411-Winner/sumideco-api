@@ -54,6 +54,9 @@ exports.createShop = async (req, res) => {
       shop_description,
     });
 
+
+    const storefront = await db.storefront
+
     const shops_details = await db.ShopDetail.create({
       shop_id: shop.id,
       title: shop_title,
