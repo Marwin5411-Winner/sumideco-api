@@ -55,6 +55,16 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.FLOAT,
           allowNull: false,
         },
+        total_revenue: {
+          type: DataTypes.FLOAT,
+          allowNull: false,
+          defaultValue: 0.00
+        },
+        platformFee: {
+          type: DataTypes.FLOAT,
+          allowNull: false,
+          defaultValue: 0.00
+        },
         stripe_data: {
           type: DataTypes.JSON,
           allowNull: true

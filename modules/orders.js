@@ -2,6 +2,7 @@ const db = require("../models");
 const moment = require("moment");
 const { checkProductByIdwithShopId, checkProductQuantity, getProductById } = require("../functions/products");
 const { where } = require("sequelize");
+const shop = require("../models/shop");
 
 
 exports.getOrdersByShopId = async (req, res) => {
@@ -96,6 +97,12 @@ exports.createOrder = async (req, res) => {
         });
     }
 
+    const shop = db.ShopDetail.findOne({
+        where: {
+            shop_id: shopid
+        }
+    })
+
     let discount = 0;
 
     try {
@@ -141,8 +148,10 @@ exports.createOrder = async (req, res) => {
         }
 
         // Apply a 10% tax on subtotal and calculate the total
-        const tax = subtotal * 0.1;
+        const tax = subtotal;
         const total = subtotal + tax - discount;
+
+        const platformFee = (shop.paymentFeePercentage * (total / 100));
 
         // Create the order
         const order = await db.Order.create({
@@ -152,6 +161,8 @@ exports.createOrder = async (req, res) => {
             subtotal: subtotal,
             discount: discount,
             coupon_id: coupon_id || null,
+            platformFee: platformFee,
+            total_revenue: (total - platformFee),
             shop_id: shopid,
             address: address || null,
             order_date: new Date().toISOString(),
