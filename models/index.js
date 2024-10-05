@@ -24,6 +24,9 @@ db.Category = require("./category")(sequelize, DataTypes);
 db.ProductCategory = require("./product_category")(sequelize, DataTypes);
 db.ShopSecret = require("./shop_secrets")(sequelize, DataTypes);
 db.ShopDetail = require("./shop_detail")(sequelize, DataTypes);
+db.Collection = require("./collection")(sequelize, DataTypes);
+db.ProductCollection = require("./collection_product")(sequelize, DataTypes);
+db.Storefront = require("./storefront")(sequelize, DataTypes);
 
 // Define relationships
 // One-to-Many: Shop to Customer
@@ -46,9 +49,24 @@ db.ShopSecret.belongsTo(db.Shop, { foreignKey: "shop_id" });
 db.Shop.hasOne(db.ShopDetail, { foreignKey: "shop_id" });
 db.ShopDetail.belongsTo(db.Shop, { foreignKey: "shop_id" });
 
-// Many-to-Many: Product to Category through ProductCategory
-db.Product.belongsToMany(db.Category, { through: db.ProductCategory, foreignKey: "product_id" });
-db.Category.belongsToMany(db.Product, { through: db.ProductCategory, foreignKey: "category_id" });
+// One-to-One: Shop to Storefront
+db.Shop.hasOne(db.Storefront, { foreignKey: "shop_id" });
+db.Storefront.belongsTo(db.Shop, { foreignKey: "shop_id" });
+
+// One-to-Many: Shop to Collection
+db.Shop.hasMany(db.Collection, { foreignKey: "shop_id" });
+db.Collection.belongsTo(db.Shop, { foreignKey: "shop_id" });
+
+// Many-to-Many: Product to Collection through CollectionProduct
+db.Product.belongsToMany(db.Collection, {
+  through: db.ProductCollection,
+  foreignKey: "product_id",
+});
+db.Collection.belongsToMany(db.Product, {
+  through: db.ProductCollection,
+  foreignKey: "collection_id",
+});
+
 
 async function initializeDatabase() {
   // Test connection
@@ -68,7 +86,8 @@ async function initializeDatabase() {
     db.Order.sync({ alter: true }),
     db.ProductCategory.sync({ alter: true }),
     db.ShopSecret.sync({ alter: true }),
-    db.ShopDetail.sync({ alter: true })
+    db.ShopDetail.sync({ alter: true }),
+    db.Storefront.sync({ alter: true})
   ]);
 }
 

@@ -16,6 +16,7 @@ const loginRouter = require("./routes/login");
 const registerRouter = require("./routes/register");
 const systemsRouter = require("./routes/systems");
 const checkoutRouter = require("./routes/checkout");
+const storefrontRouter = require('./routes/storefront');
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
@@ -65,6 +66,7 @@ const corsOptionsDelegate = function (req, callback) {
     callback(null, { origin: true }); // Allow all origins
   } else {
     // Apply your existing CORS restrictions
+    console.log(origin)
     if (allowedOrigins.includes(origin) || isAllowedSubdomain(origin)) {
       callback(null, { origin: true }); // Allow the origin
     } else {
@@ -103,6 +105,7 @@ app.use("/productCategories", validateJWT, productCategoriesRouter);
 app.use("/systems", systemsRouter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/checkout", checkoutRouter);
+app.use("/storefront", validateJWT, storefrontRouter);
 
 const webhook = require("./modules/webhook");
 app.post(

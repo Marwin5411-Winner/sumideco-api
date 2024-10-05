@@ -70,6 +70,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: "shops_details",
+      paranoid: true
     }
   );
 };

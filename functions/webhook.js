@@ -21,6 +21,8 @@ async function handleCheckoutSessionCompleted(session) {
 
     // Update order status to 'paid'
     order.status = 'paid';
+
+    order.stripe_data = session;
     await order.save();
 
     // Get the list of items in the order

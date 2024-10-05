@@ -6,7 +6,7 @@ const db = require("../models");
 exports.getShopDetailsByShopId = async (req, res) => {
   const { shopid } = req.params;
 
-  if (!id) {
+  if (!shopid) {
     return res.status(404).json({
       success: 0,
       error: global.HTTP_CODE.NOT_FOUND + ": Shop ID is Required",
