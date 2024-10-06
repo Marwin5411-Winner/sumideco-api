@@ -1,3 +1,4 @@
+const { where } = require('sequelize');
 const db = require('../models');
 
 
@@ -22,8 +23,21 @@ async function handleCheckoutSessionCompleted(session) {
     // Update order status to 'paid'
     order.status = 'paid';
 
+
+
     order.stripe_data = session;
     await order.save();
+
+    const shop = await db.ShopDetail.findOne({
+      where: { shop_id: order.shop_id }
+    });
+
+    shop.total_earning += order.total_revenue;
+    shop.total_sales += order.total;
+    
+    shop.balance += order.total_revenue;
+
+    
 
     // Get the list of items in the order
     // Assuming that the order object has an item_list property
@@ -51,6 +65,9 @@ async function handleCheckoutSessionCompleted(session) {
 
       if (product) {
         product.quantity -= quantityOrdered;
+        shop.total_products_sold += quantityOrdered;
+        product.total_sales += (product.price * quantityOrdered);
+        product.sold_amount += quantityOrdered;
         if (product.quantity < 0) {
           product.quantity = 0; // Prevent negative inventory
         }
@@ -59,6 +76,8 @@ async function handleCheckoutSessionCompleted(session) {
         console.error(`Product not found: ${productId}`);
       }
     }
+
+    await shop.save();
   } catch (error) {
     console.error(`Error handling checkout session completed: ${error.message}`);
   }

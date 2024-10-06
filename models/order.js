@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.STRING,
           allowNull: false,
         },
+        phone_number: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
         item_list: {
           // [{product_id, quantity}]
           type: DataTypes.JSON,
