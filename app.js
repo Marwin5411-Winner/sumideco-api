@@ -35,7 +35,7 @@ const allowedOrigins = [
   "http://localhost:4000",
   "http://localhost:3001",
   "https://api.sumideco.com",
-  "https://addmin.sumideco.com"
+  "https://admin.sumideco.com"
 ];
 
 const isAllowedSubdomain = (origin) => {
@@ -57,7 +57,11 @@ const corsOptionsDelegate = function (req, callback) {
   if (req.path.startsWith('/webhook/')) {
     // Bypass CORS for any requests to /webhook/*
     callback(null, { origin: true }); // Allow all origins
-  } else {
+  } else if (req.path.startsWith('/checkout/')) {
+    callback(null, { origin: true }); // Allow all origins
+  }
+  
+  else {
     // Apply your existing CORS restrictions
     console.log(origin)
     if (allowedOrigins.includes(origin) || isAllowedSubdomain(origin)) {
