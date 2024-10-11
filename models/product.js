@@ -85,7 +85,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: "Draft"
         },
-        revenue: {
+        total_sales: {
             type: DataTypes.FLOAT,
             allowNull: false,
             defaultValue: 0.00
@@ -95,7 +95,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: false
         },
-        sales: {
+        sold_amount: {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0

@@ -88,7 +88,7 @@ exports.getOrderById = async (req, res) => {
 
 exports.createOrder = async (req, res) => {
     const { shopid } = req.params;
-    const { customer_id, email, address, status, coupon_id, products } = req.body;
+    const { customer_id, email, address, status, coupon_id, products, phone_number } = req.body;
 
     if (!email || !products || !Array.isArray(products) || products.length === 0) {
         return res.status(400).json({
@@ -97,11 +97,21 @@ exports.createOrder = async (req, res) => {
         });
     }
 
-    const shop = db.ShopDetail.findOne({
+    console.log(shopid)
+
+    const shop = await db.ShopDetail.findOne({
         where: {
             shop_id: shopid
         }
     })
+
+    if (!shop)
+    {
+        return res.status(400).json({
+            success: 0,
+            error: 'Shop Not found'
+        });
+    }
 
     let discount = 0;
 
@@ -148,15 +158,21 @@ exports.createOrder = async (req, res) => {
         }
 
         // Apply a 10% tax on subtotal and calculate the total
-        const tax = subtotal;
+        const tax = 0;
+
+
+        
         const total = subtotal + tax - discount;
 
         const platformFee = (shop.paymentFeePercentage * (total / 100));
+
+        console.log("PlatformFee", platformFee);
 
         // Create the order
         const order = await db.Order.create({
             customer_id: customer_id || null,
             email: email,
+            phone_number : phone_number,
             item_list: JSON.stringify(validatedProducts), // Store item list as JSON
             subtotal: subtotal,
             discount: discount,

@@ -59,6 +59,10 @@ exports.createShop = async (req, res) => {
       shop_id: shop.id
     })
 
+    const shop_secrets = await db.ShopSecret.create({
+      shop_id: shop.id
+    })
+
     const shops_details = await db.ShopDetail.create({
       shop_id: shop.id,
       title: shop_title,

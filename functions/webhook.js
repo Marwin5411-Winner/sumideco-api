@@ -1,10 +1,11 @@
+const { where } = require('sequelize');
 const db = require('../models');
 
 
-async function handleCheckoutSessionCompleted(session) {
+async function handleCheckoutSessionCompleted(orderId, session = null) {
   try {
-    // Extract order ID from session metadata
-    const orderId = session.metadata.order_id;
+    // // Extract order ID from session metadata
+    // const orderId = session.metadata.order_id;
 
     if (!orderId) {
       console.error('Order ID not found in session metadata');
@@ -19,11 +20,29 @@ async function handleCheckoutSessionCompleted(session) {
       return;
     }
 
+    if (order.status == 'paid') {
+      console.error(`Order Already paid: ${orderId}`);
+      return;
+    }
+
     // Update order status to 'paid'
     order.status = 'paid';
 
+
+
     order.stripe_data = session;
     await order.save();
+
+    const shop = await db.ShopDetail.findOne({
+      where: { shop_id: order.shop_id }
+    });
+
+    shop.total_earning += order.total_revenue;
+    shop.total_sales += order.total;
+    
+    shop.balance += order.total_revenue;
+
+    
 
     // Get the list of items in the order
     // Assuming that the order object has an item_list property
@@ -51,6 +70,9 @@ async function handleCheckoutSessionCompleted(session) {
 
       if (product) {
         product.quantity -= quantityOrdered;
+        shop.total_products_sold += quantityOrdered;
+        product.total_sales += (product.price * quantityOrdered);
+        product.sold_amount += quantityOrdered;
         if (product.quantity < 0) {
           product.quantity = 0; // Prevent negative inventory
         }
@@ -59,6 +81,8 @@ async function handleCheckoutSessionCompleted(session) {
         console.error(`Product not found: ${productId}`);
       }
     }
+
+    await shop.save();
   } catch (error) {
     console.error(`Error handling checkout session completed: ${error.message}`);
   }

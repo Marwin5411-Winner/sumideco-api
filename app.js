@@ -17,6 +17,9 @@ const registerRouter = require("./routes/register");
 const systemsRouter = require("./routes/systems");
 const checkoutRouter = require("./routes/checkout");
 const storefrontRouter = require('./routes/storefront');
+const recipientsRouter = require('./routes/recipients')
+const stripeRouter = require('./routes/stripe');
+const accountRouter = require('./routes/account');
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
@@ -106,6 +109,10 @@ app.use("/systems", systemsRouter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/checkout", checkoutRouter);
 app.use("/storefront", validateJWT, storefrontRouter);
+app.use("/recipients", validateJWT, recipientsRouter);
+app.use("/stripe", validateJWT, stripeRouter);
+app.use("/account", validateJWT, accountRouter);
+
 
 const webhook = require("./modules/webhook");
 app.post(
