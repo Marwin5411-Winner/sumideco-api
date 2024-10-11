@@ -2,10 +2,10 @@ const { where } = require('sequelize');
 const db = require('../models');
 
 
-async function handleCheckoutSessionCompleted(session) {
+async function handleCheckoutSessionCompleted(orderId, session = null) {
   try {
-    // Extract order ID from session metadata
-    const orderId = session.metadata.order_id;
+    // // Extract order ID from session metadata
+    // const orderId = session.metadata.order_id;
 
     if (!orderId) {
       console.error('Order ID not found in session metadata');
@@ -17,6 +17,11 @@ async function handleCheckoutSessionCompleted(session) {
 
     if (!order) {
       console.error(`Order not found: ${orderId}`);
+      return;
+    }
+
+    if (order.status == 'paid') {
+      console.error(`Order Already paid: ${orderId}`);
       return;
     }
 

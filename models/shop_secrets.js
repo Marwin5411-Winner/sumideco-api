@@ -8,14 +8,14 @@ module.exports = (sequelize, DataTypes) => {
           primaryKey: true,
           unique: true,
         },
-        stripe_secret: {
+        stripe_connect_id : {
           type: DataTypes.STRING,
           allowNull: true,
         },
-        stripe_public: {
+        omise_recipient_id: {
           type: DataTypes.STRING,
-          allowNull: false,
-        },
+          allowNull: true
+        }
       },
       {
         tableName: "shop_secrets",
